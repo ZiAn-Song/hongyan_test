@@ -1,0 +1,914 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>山大实践平台（示例页面）</title>
+  <style>
+    :root{
+      --sdu-red: #c8102e; /* 山大红 */
+      --muted: #6b6b6b;
+      --bg: #f8f8f9;
+      --card: #ffffff;
+      --glass: rgba(255,255,255,0.6);
+      --accent: #1d71b8;
+      --radius: 12px;
+      --max-w: 1200px;
+      --shadow: 0 6px 18px rgba(30,30,30,0.08);
+      font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,"Helvetica Neue",Arial;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:#111}
+    .container{max-width:var(--max-w);margin:28px auto;padding:0 20px}
+
+    header{display:flex;align-items:center;justify-content:space-between;padding:18px 0}
+    .brand{display:flex;gap:12px;align-items:center}
+    .logo{width:52px;height:52px;border-radius:10px;background:linear-gradient(135deg,var(--sdu-red),#720018);display:flex;align-items:center;justify-content:center;color:white;font-weight:700}
+    nav a{margin-left:18px;color:var(--muted);text-decoration:none}
+    nav a.cta{background:var(--sdu-red);color:#fff;padding:8px 14px;border-radius:8px}
+
+    /* hero */
+    .hero{display:grid;grid-template-columns:1fr 420px;gap:20px;align-items:center;margin-top:8px}
+    .hero-card{background:linear-gradient(180deg,rgba(200,16,46,0.05),transparent);padding:28px;border-radius:var(--radius);box-shadow:var(--shadow)}
+    .hero h1{color:var(--sdu-red);margin:0 0 8px;font-size:28px}
+    .hero p{margin:0 0 18px;color:var(--muted)}
+    .cta-row{display:flex;gap:12px}
+    .btn{padding:12px 16px;border-radius:10px;border:0;cursor:pointer;font-weight:600}
+    .btn.primary{background:var(--sdu-red);color:white}
+    .btn.secondary{background:white;border:1px solid #e6e6e6}
+
+    /* carousel */
+    .carousel{position:relative;border-radius:10px;overflow:hidden;height:260px;background:linear-gradient(90deg,#fff,#fafafa);display:flex;align-items:center;justify-content:center}
+    .slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:20px;color:#fff;font-weight:700}
+    .slide.one{background:linear-gradient(135deg,var(--sdu-red),#ff6b6b)}
+    .slide.two{background:linear-gradient(135deg,#1d71b8,#1166a3)}
+    .slide.three{background:linear-gradient(135deg,#2c9c6b,#1a8a5b)}
+    .carousel .dots{position:absolute;right:12px;bottom:12px;display:flex;gap:8px}
+    .dot{width:10px;height:10px;background:rgba(255,255,255,0.6);border-radius:50%}
+
+    /* data board */
+    .board{display:flex;gap:12px;margin-top:18px}
+    .stat{flex:1;background:var(--card);padding:14px;border-radius:10px;box-shadow:var(--shadow);display:flex;flex-direction:column}
+    .stat .num{font-size:20px;color:var(--sdu-red);font-weight:800}
+    .stat .label{color:var(--muted);font-size:13px}
+
+    /* sections */
+    section{margin-top:28px}
+    h2.section-title{margin:0 0 12px;color:#222}
+
+    /* demand library */
+    .demand{display:flex;gap:18px}
+    .map{flex:1;background:var(--card);padding:12px;border-radius:10px;box-shadow:var(--shadow);min-height:380px;position:relative}
+    .map .map-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--muted)}
+    .list{width:480px;background:var(--card);padding:12px;border-radius:10px;box-shadow:var(--shadow);overflow:auto;max-height:520px}
+    .project-card{border-radius:10px;padding:12px;margin-bottom:10px;border:1px solid #f0f0f0}
+    .meta{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted)}
+    .tag{background:#f3f3f3;padding:4px 8px;border-radius:8px;font-size:12px}
+
+    /* team center */
+    .teams{display:flex;flex-wrap:wrap;gap:12px}
+    .team-card{background:var(--card);padding:12px;border-radius:10px;width:240px;box-shadow:var(--shadow)}
+    .skill{display:inline-block;padding:6px 8px;border-radius:8px;margin:6px 6px 0 0;background:#f5f5f5;font-size:12px}
+
+    /* training */
+    .training-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+    .course{background:linear-gradient(180deg,#fff,#fbfbff);padding:12px;border-radius:10px;box-shadow:var(--shadow)}
+
+    /* backend map */
+    .support-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+    .base{background:var(--card);padding:12px;border-radius:10px;box-shadow:var(--shadow)}
+
+    /* logs */
+    .feed{display:flex;flex-direction:column;gap:12px}
+    .log{background:var(--card);padding:12px;border-radius:10px;box-shadow:var(--shadow)}
+
+    /* outcomes */
+    .gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+    .outcome{background:var(--card);padding:12px;border-radius:10px;box-shadow:var(--shadow)}
+
+    footer{margin:32px 0 80px;color:var(--muted);text-align:center}
+
+    /* AI 问答样式 */
+    .ai-answer {
+      background: var(--card);
+      padding: 12px;
+      border-radius: var(--radius);
+      margin-top: 10px;
+      box-shadow: var(--shadow);
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    .markdown-content {
+      margin-top: 6px;
+    }
+    .markdown-content h1, .markdown-content h2, .markdown-content h3 {
+      margin: 12px 0 8px 0;
+      font-weight: bold;
+    }
+    .markdown-content h1 { font-size: 1.5em; }
+    .markdown-content h2 { font-size: 1.3em; }
+    .markdown-content h3 { font-size: 1.1em; }
+    .markdown-content p {
+      margin: 8px 0;
+    }
+    .markdown-content strong { font-weight: bold; }
+    .markdown-content em { font-style: italic; }
+    .markdown-content ul, .markdown-content ol {
+      padding-left: 2em;
+      margin: 8px 0;
+    }
+    .markdown-content li {
+      margin-bottom: 4px;
+    }
+    .markdown-content table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 12px 0;
+      font-size: 0.95em;
+      border: 1px solid #ddd;
+    }
+    .markdown-content th, .markdown-content td {
+      border: 1px solid #ddd;
+      padding: 8px 10px;
+      text-align: left;
+    }
+    .markdown-content th {
+      background-color: #f8f9fa;
+      font-weight: bold;
+    }
+    .markdown-content tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    .markdown-content pre {
+      background: #f4f4f4;
+      padding: 10px;
+      border-radius: 4px;
+      overflow-x: auto;
+      margin: 8px 0;
+    }
+    .markdown-content code {
+      font-family: monospace;
+      background: #f4f4f4;
+      padding: 2px 4px;
+      border-radius: 3px;
+    }
+    .markdown-content blockquote {
+      border-left: 4px solid #ddd;
+      padding-left: 1em;
+      color: #666;
+      margin: 8px 0;
+    }
+
+    @media (max-width:900px){
+      .hero{grid-template-columns:1fr}
+      nav a{display:none}
+      .list{width:100%}
+      .demand{flex-direction:column}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="logo">山大</div>
+        <div>
+          <div style="font-weight:700">鸿雁-云边端协同边疆实践育人新形态</div>
+          <div style="font-size:12px;color:var(--muted)">需求 · 匹配 · 赋能 · 实践 · 转化</div>
+        </div>
+      </div>
+      <nav>
+        <a href="#overview">平台概览</a>
+        <a href="#demand">需求库</a>
+        <a href="#team">团队中心</a>
+        <a href="#train">培训赋能</a>
+        <a href="#results">成果展示</a>
+        <a class="cta" href="#post">发布需求</a>
+      </nav>
+    </header>
+
+    <!-- HERO -->
+    <div class="hero">
+      <div class="hero-card">
+        <h1>连接地方需求，赋能学生实践——山大实践一体化平台</h1>
+        <p>索引栏直观展示"需求洞察 → 项目匹配 → 赋能培训 → 实地实践 → 成果转化"的全流程，帮助地方单位与学生团队高效协作并实现成果落地。</p>
+        <div class="cta-row">
+          <button class="btn primary" onclick="location.href='#post'">发布需求（地方/企业）</button>
+          <button class="btn secondary" onclick="location.href='#team'">加入项目（学生）</button>
+        </div>
+
+        <div style="margin-top:18px">
+          <div style="font-size:13px;color:var(--muted);margin-bottom:8px">快速数据看板</div>
+          <div class="board">
+            <div class="stat"><div class="num" id="stat-posts">—</div><div class="label">已发布需求</div></div>
+            <div class="stat"><div class="num" id="stat-matches">—</div><div class="label">成功匹配团队</div></div>
+            <div class="stat"><div class="num" id="stat-regions">—</div><div class="label">覆盖省市</div></div>
+            <div class="stat"><div class="num" id="stat-results">—</div><div class="label">专利/论文数量</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="carousel" aria-hidden="false">
+          <div class="slide one" style="transform:translateX(0%);">学生团队在乡村调研 · 数字文旅 · 智慧农业</div>
+          <div class="slide two" style="transform:translateX(100%);">企业导师线上讲座 · 项目孵化</div>
+          <div class="slide three" style="transform:translateX(200%);">技术转移与成果发布 · 专利申请</div>
+          <div class="dots">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+          </div>
+        </div>
+
+        <div style="margin-top:12px;display:flex;gap:8px">
+          <button class="btn" onclick="carouselPrev()">◀</button>
+          <button class="btn" onclick="carouselNext()">▶</button>
+          <div style="flex:1"></div>
+          <input id="search-project" placeholder="按项目/地区/类型搜索需求" style="padding:10px;border-radius:10px;border:1px solid #eee;width:62%" />
+        </div>
+      </div>
+    </div>
+
+    <!-- DEMAND LIBRARY -->
+    <section id="demand">
+      <h2 class="section-title">需求库</h2>
+      <div class="demand">
+        <div class="map">
+          <div style="font-size:13px;color:var(--muted);margin-bottom:8px">
+            中国地图 · 点击省份查看需求
+          </div>
+          <div style="position:relative;width:100%;height:auto;">
+            <img src="中国地图.png" alt="中国地图" id="china-map" style="width:100%;height:auto;display:block;border-radius:8px;" />
+            <!-- 点位容器 -->
+            <div id="map-dots" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;"></div>
+          </div>
+        </div>
+
+        <div class="list" id="project-list">
+          <!-- project cards injected by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- TEAM CENTER -->
+    <section id="team">
+      <h2 class="section-title">团队中心</h2>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+        <div style="color:var(--muted);font-size:14px">展示已成立的优秀实践团队，支持招募队友与寻找团队。</div>
+        <div style="display:flex;gap:8px">
+          <button class="btn secondary" onclick="openRecruit()">招募队友</button>
+          <button class="btn primary" onclick="openSkillCard()">发布技能卡片</button>
+        </div>
+      </div>
+      <div class="teams" id="teams-grid" style="margin-top:12px">
+        <!-- team cards injected by JS -->
+      </div>
+      <div style="margin-top:12px;background:linear-gradient(90deg,#fff,#fffdf5);padding:12px;border-radius:10px;box-shadow:var(--shadow)}">
+        <div style="font-weight:700">智能组队助手（AI 赋能）</div>
+        <div style="color:var(--muted);font-size:13px;margin-top:6px">输入项目 ID 或感兴趣的领域，系统将根据技能互补性、空闲时间、过往经验推荐潜在队友。</div>
+        <div style="margin-top:10px;display:flex;gap:8px;align-items:center">
+          <input id="ai-input" placeholder="输入项目ID或关键词，例如：智慧农业" style="padding:10px;border-radius:10px;border:1px solid #eee;flex:1" />
+          <button class="btn primary" id="ai-send-btn" onclick="aiMatch()">AI 推荐</button>
+        </div>
+        <div id="ai-result" class="ai-answer" style="display:none">
+          <div class="markdown-content" id="streaming-content"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TRAINING -->
+    <section id="train">
+      <h2 class="section-title">培训赋能站</h2>
+      <div style="color:var(--muted);margin-bottom:8px">AI 导师、校内导师与企业专家联合出品的系列课程、常见问题与优秀案例库。</div>
+      <div class="training-grid" id="course-grid">
+        <!-- courses injected -->
+      </div>
+    </section>
+
+    <!-- BACKEND SUPPORT -->
+    <section id="support">
+      <h2 class="section-title">后端支撑点（线下网络）</h2>
+      <div style="color:var(--muted);margin-bottom:8px">可视化地图展示山东大学在各地建立的研究院、技术转移中心、校友会、合作企业等线下实体。</div>
+      <div class="support-grid" id="bases-grid">
+        <!-- base cards injected -->
+      </div>
+    </section>
+
+    <!-- PRACTICE LOGS -->
+    <section id="practice">
+      <h2 class="section-title">实践进行时 · 团队日志</h2>
+      <div style="color:var(--muted);margin-bottom:8px">团队通过文字、图片、视频更新进展；系统自动提醒周报与中期检查。</div>
+      <div class="feed" id="feed">
+        <!-- logs injected -->
+      </div>
+    </section>
+
+    <!-- OUTCOMES -->
+    <section id="results">
+      <h2 class="section-title">成果展示</h2>
+      <div style="color:var(--muted);margin-bottom:8px">历年优秀实践项目的报告、代码、演示、论文、专利、媒体报道等。</div>
+      <div class="gallery" id="gallery">
+        <!-- outcomes injected -->
+      </div>
+    </section>
+
+    <footer>
+      © 2025 山东大学 · 实践服务平台（示例页面） · 本页面为原型样例，不含真实数据
+    </footer>
+  </div>
+
+  <script>
+    /* ---------- 占位数据 ---------- */
+    const stats = {posts: 128, matches: 42, regions: 18, results: 26};
+    const projects = [
+      {id:'P-001',title:'XX县农产品电商直播智能助手开发',unit:'泰安市XX县农业局',region:'山东·泰安',type:'智慧农业',urgent:'高',period:'3个月'},
+      {id:'P-002',title:'海滨小镇数字文旅内容策划',unit:'青岛市文化和旅游局',region:'山东·青岛',type:'数字文旅',urgent:'中',period:'4个月'},
+      {id:'P-003',title:'基层卫生站远程诊疗系统需求调研',unit:'临沂市某卫生服务中心',region:'山东·临沂',type:'智慧医疗',urgent:'高',period:'6个月'},
+      {id:'P-004',title:'乡村太阳能微电网优化方案',unit:'德州市能源办',region:'山东·德州',type:'新能源',urgent:'低',period:'5个月'},
+      {id:'P-005',title:'地方非遗文化数据库建设',unit:'济宁市文化馆',region:'山东·济宁',type:'数字文旅',urgent:'中',period:'4个月'}
+    ];
+    const teams = [
+      {name:'智农先锋',members:[{major:'计算机',grade:'2023'},{major:'农学',grade:'2022'},{major:'市场营销',grade:'2021'}],skills:['Python','数据分析','电商'],exp:3},
+      {name:'文旅筑梦',members:[{major:'设计',grade:'2024'},{major:'传媒',grade:'2023'}],skills:['UI/UX','短视频策划'],exp:2},
+      {name:'医护连心',members:[{major:'公共卫生',grade:'2022'},{major:'软件工程',grade:'2023'}],skills:['后端','数据可视化'],exp:1}
+    ];
+    const courses = [
+      {title:'项目管理与进度控制',author:'校内导师',duration:'2h'},
+      {title:'乡村调研方法论',author:'企业专家',duration:'1.5h'},
+      {title:'数据安全与隐私保护',author:'信息中心',duration:'1h'},
+      {title:'孵化与成果转化指南',author:'技术转移中心',duration:'2h'}
+    ];
+    const bases = [
+      {name:'烟台研究院',focus:'智慧海洋·海洋经济',support:'办公空间、导师支持'},
+      {name:'菏泽校友会',focus:'农业技术推广',support:'渠道对接'},
+      {name:'济南技术转移中心',focus:'技术孵化',support:'专利咨询、融资对接'}
+    ];
+    const logs = [
+      {team:'智农先锋',time:'2025-09-01',text:'完成第一轮用户访谈并整理问卷结果，下一步准备数据采集。'},
+      {team:'文旅筑梦',time:'2025-08-20',text:'取得地方文化馆合作，开始历史素材数字化采集。'}
+    ];
+    const outcomes = [
+      {title:'农村电商助手 · 项目报告',meta:'软件/演示/论文',link:'#'},
+      {title:'数字文旅样例站点',meta:'网站/演示',link:'#'},
+      {title:'远程诊疗系统调研报告',meta:'报告/调研',link:'#'}
+    ];
+
+    /* ---------- 渲染基础数据 ---------- */
+    document.getElementById('stat-posts').innerText = stats.posts;
+    document.getElementById('stat-matches').innerText = stats.matches;
+    document.getElementById('stat-regions').innerText = stats.regions;
+    document.getElementById('stat-results').innerText = stats.results;
+
+    const list = document.getElementById('project-list');
+    projects.forEach(p=>{
+      const el = document.createElement('div'); el.className='project-card';
+      el.innerHTML = `<div style=\"display:flex;justify-content:space-between;align-items:center\"><div style=\"font-weight:700\">${p.title}</div><div style=\"font-size:13px;color:var(--muted)\">ID: ${p.id}</div></div><div style=\"margin-top:8px;display:flex;justify-content:space-between\"><div class=\"meta\"><span class=\"tag\">${p.type}</span><div style=\"margin-left:8px\">${p.unit}</div></div><div style=\"text-align:right;min-width:140px\"><div style=\"font-size:13px;color:var(--muted)\">${p.region}</div><div style=\"margin-top:6px\"><strong>${p.urgent}</strong> · ${p.period}</div></div></div>`;
+      el.onclick = ()=>openProject(p.id);
+      list.appendChild(el);
+    });
+
+    const teamsGrid = document.getElementById('teams-grid');
+    teams.forEach(t=>{
+      const el = document.createElement('div'); el.className='team-card';
+      el.innerHTML = `<div style=\"font-weight:800\">${t.name}</div><div style=\"font-size:13px;color:var(--muted);margin-top:6px\">成员：${t.members.map(m=>m.major+'（'+m.grade+'）').join('、')}</div><div style=\"margin-top:8px\">${t.skills.map(s=>'<span class=\"skill\">'+s+'</span>').join('')}</div><div style=\"margin-top:8px;color:var(--muted);font-size:13px\">过往项目数：${t.exp}</div><div style=\"margin-top:8px;display:flex;gap:8px\"><button class=\"btn secondary\" onclick=\"event.stopPropagation();recruit(' + JSON.stringify(t.name) + ')\">招募队友</button><button class=\"btn primary\" onclick=\"event.stopPropagation();viewTeam(' + JSON.stringify(t.name) + ')\">查看团队</button></div>`;
+      teamsGrid.appendChild(el);
+    });
+
+    const courseGrid = document.getElementById('course-grid');
+    courses.forEach(c=>{
+      const el = document.createElement('div'); el.className='course';
+      el.innerHTML = `<div style=\"font-weight:700\">${c.title}</div><div style=\"color:var(--muted);font-size:13px;margin-top:6px\">${c.author} · ${c.duration}</div><div style=\"margin-top:8px\"><button class=\"btn primary\">进入课程</button></div>`;
+      courseGrid.appendChild(el);
+    });
+
+    const basesGrid = document.getElementById('bases-grid');
+    bases.forEach(b=>{
+      const el = document.createElement('div'); el.className='base';
+      el.innerHTML = `<div style=\"font-weight:700\">${b.name}</div><div style=\"color:var(--muted);font-size:13px;margin-top:6px\">聚焦：${b.focus}</div><div style=\"margin-top:6px\">支持：${b.support}</div>`;
+      basesGrid.appendChild(el);
+    });
+
+    const feed = document.getElementById('feed');
+    logs.forEach(l=>{
+      const el = document.createElement('div'); el.className='log';
+      el.innerHTML = `<div style=\"font-weight:700\">${l.team}</div><div style=\"font-size:12px;color:var(--muted)\">${l.time}</div><div style=\"margin-top:8px\">${l.text}</div>`;
+      feed.appendChild(el);
+    });
+
+    const gallery = document.getElementById('gallery');
+    outcomes.forEach(o=>{
+      const el = document.createElement('div'); el.className='outcome';
+      el.innerHTML = `<div style=\"font-weight:700\">${o.title}</div><div style=\"color:var(--muted);font-size:13px;margin-top:6px\">${o.meta}</div><div style=\"margin-top:8px\"><a href=\"${o.link}\">查看详情</a></div>`;
+      gallery.appendChild(el);
+    });
+
+    /* ---------- 地图点位（示意） ---------- */
+    const mapDots = document.getElementById('map-dots');
+    // 简单示意：为每个项目随机生成一个点（基于box范围），真实项目请替换为实际经纬/坐标映射
+    projects.forEach((p,i)=>{
+      const dot = document.createElement('div');
+      dot.style.position='absolute';
+      const left = 10 + (i*18)%80; // 示意横向分布
+      const top = 10 + (i*22)%70;
+      dot.style.left = left + '%'; dot.style.top = top + '%';
+      dot.style.width='12px';dot.style.height='12px';dot.style.borderRadius='50%';dot.style.background='var(--sdu-red)';dot.title = p.title;dot.style.pointerEvents='auto';
+      dot.style.cursor='pointer';
+      dot.onclick = ()=>{alert(p.title+'\n'+p.region+'\n需求类型：'+p.type)};
+      mapDots.appendChild(dot);
+    });
+
+    /* ---------- 交互函数 ---------- */
+    function openProject(id){alert('打开需求详情：'+id)}
+    function openRecruit(){alert('打开招募窗口（示意）')}
+    function openSkillCard(){alert('发布技能卡片（示意）')}
+    function recruit(name){alert('向团队【'+name+'】发起加入申请（示意）')}
+    function viewTeam(name){alert('查看团队 '+name+'（示意）')}
+
+    /* ---------- Markdown解析函数 ---------- */
+function parseMarkdown(markdown) {
+  // 先处理标题（支持 1-6 级标题）
+  markdown = markdown.replace(/^######\s+(.*$)/gm, '<h6>$1</h6>');
+  markdown = markdown.replace(/^#####\s+(.*$)/gm, '<h5>$1</h5>');
+  markdown = markdown.replace(/^####\s+(.*$)/gm, '<h4>$1</h4>');
+  markdown = markdown.replace(/^###\s+(.*$)/gm, '<h3>$1</h3>');
+  markdown = markdown.replace(/^##\s+(.*$)/gm, '<h2>$1</h2>');
+  markdown = markdown.replace(/^#\s+(.*$)/gm, '<h1>$1</h1>');
+  
+  // 处理粗体和斜体
+  markdown = markdown.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  markdown = markdown.replace(/\*(.*?)\*/g, '<em>$1</em>');
+  
+  // 处理代码块和行内代码
+  markdown = markdown.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
+  markdown = markdown.replace(/`(.*?)`/g, '<code>$1</code>');
+  
+  // 处理图片和链接
+  markdown = markdown.replace(/!\[(.*?)\]\((.*?)\)/g, '<img src="$2" alt="$1">');
+  markdown = markdown.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2">$1</a>');
+  
+  // 处理引用
+  markdown = markdown.replace(/^>\s(.*$)/gm, '<blockquote>$1</blockquote>');
+  
+  // 处理表格（不修剪行，保持原始缩进）
+  markdown = processTables(markdown);
+  
+  // 处理列表（核心改进部分）
+  markdown = processListsWithIndent(markdown);
+  
+  // 处理剩余的段落
+  markdown = processParagraphs(markdown);
+  
+  return markdown;
+}
+
+// 处理表格 - 修复：不修剪行
+function processTables(markdown) {
+  const lines = markdown.split('\n');
+  let result = [];
+  let inTable = false;
+  let tableRows = [];
+  
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const trimmedLine = line.trim(); // 只用于检查，不改变原行
+    
+    // 检查是否为表格行（判断trim后的行）
+    if (trimmedLine.startsWith('|') && trimmedLine.endsWith('|')) {
+      if (!inTable) {
+        inTable = true;
+      }
+      tableRows.push(line); // 保持原始缩进
+    } else {
+      // 处理之前收集的表格
+      if (inTable && tableRows.length > 0) {
+        result.push(convertTableToHtml(tableRows));
+        tableRows = [];
+        inTable = false;
+      }
+      result.push(line);
+    }
+  }
+  
+  // 处理文档末尾的表格
+  if (inTable && tableRows.length > 0) {
+    result.push(convertTableToHtml(tableRows));
+  }
+  
+  return result.join('\n');
+}
+
+// 表格转换
+function convertTableToHtml(tableRows) {
+  let tableHtml = '<table>';
+  let hasSeparator = false;
+  
+  // 检查是否有分隔行
+  for (let i = 0; i < tableRows.length; i++) {
+    const trimmedRow = tableRows[i].trim();
+    if (trimmedRow.includes('|--') || trimmedRow.includes('|-')) {
+      hasSeparator = true;
+      break;
+    }
+  }
+  
+  for (let i = 0; i < tableRows.length; i++) {
+    const trimmedRow = tableRows[i].trim();
+    
+    // 跳过分隔行
+    if (trimmedRow.includes('|--') || trimmedRow.includes('|-') || trimmedRow.includes('-|')) {
+      continue;
+    }
+    
+    const cells = trimmedRow.split('|')
+      .map(cell => cell.trim())
+      .filter(cell => cell.length > 0);
+      
+    if (cells.length === 0) continue;
+    
+    tableHtml += '<tr>';
+    
+    for (let j = 0; j < cells.length; j++) {
+      let cellContent = cells[j];
+      // 处理单元格内的加粗
+      cellContent = cellContent.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+      
+      const tag = (hasSeparator && i === 0) ? 'th' : 'td';
+      tableHtml += `<${tag}>${cellContent}</${tag}>`;
+    }
+    
+    tableHtml += '</tr>';
+  }
+  
+  tableHtml += '</table>';
+  return tableHtml;
+}
+
+// 核心改进：处理列表和缩进
+function processListsWithIndent(markdown) {
+  const lines = markdown.split('\n');
+  let result = [];
+  
+  // 用于构建树形结构的栈
+  let stack = [];
+  stack.push({ type: 'root', level: -1, content: [] });
+  
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const trimmedLine = line.trim();
+    
+    if (trimmedLine === '') {
+      // 空行结束当前列表块
+      flushStack(stack, result);
+      result.push('');
+      continue;
+    }
+    
+    // 检查是否为列表项
+    const listMatch = parseListItem(line);
+    
+    if (listMatch) {
+      const { indent, type, number, content } = listMatch;
+      const level = Math.floor(indent / 2); // 每2个空格为一级
+      
+      // 找到正确的父级
+      while (stack.length > 0 && stack[stack.length - 1].level >= level) {
+        const last = stack.pop();
+        if (last.type === 'ol' || last.type === 'ul') {
+          result.push(`</${last.type}>`);
+        }
+      }
+      
+      // 如果当前级别比栈顶高，开始新的列表
+      if (stack.length === 0 || stack[stack.length - 1].level < level) {
+        const listType = type === 'ordered' ? 'ol' : 'ul';
+        result.push(`<${listType}>`);
+        stack.push({ type: listType, level: level, content: [] });
+      }
+      
+      // 添加列表项
+      if (type === 'ordered' && number) {
+        result.push(`<li value="${number}">${content}</li>`);
+      } else {
+        result.push(`<li>${content}</li>`);
+      }
+      
+      // 更新栈顶的级别
+      if (stack.length > 0) {
+        stack[stack.length - 1].level = level;
+      }
+    } else {
+      // 非列表行，关闭所有列表
+      flushStack(stack, result);
+      
+      // 检查是否为HTML标签
+      const isHtmlTag = line.match(/^<[^>]+>/) || line.startsWith('</');
+      const isHeading = line.match(/^<h[1-6]>/) || line.startsWith('</h');
+      const isTable = line.startsWith('<table') || line.startsWith('</table');
+      const isList = line.startsWith('<ul') || line.startsWith('</ul') || 
+                    line.startsWith('<ol') || line.startsWith('</ol') ||
+                    line.startsWith('<li>') || line.endsWith('</li>');
+      const isParagraph = line.startsWith('<p>') || line.startsWith('</p>');
+      const isBlockquote = line.startsWith('<blockquote');
+      const hasInlineFormatting = line.includes('<strong>') || line.includes('<em>') ||
+                                line.includes('<code>') || line.includes('<a href=') ||
+                                line.includes('<img src=');
+      
+      if (isHtmlTag || isHeading || isTable || isList || isParagraph || isBlockquote || hasInlineFormatting) {
+        // 已经是HTML标签，直接添加
+        result.push(line);
+      } else if (trimmedLine !== '') {
+        // 检查当前行是否是列表项的延续（有缩进但不是列表标记）
+        const leadingSpaces = line.match(/^(\s*)/)[0].length;
+        if (leadingSpaces > 0 && result.length > 0) {
+          // 尝试添加到上一个列表项
+          const lastIndex = result.length - 1;
+          if (result[lastIndex].endsWith('</li>')) {
+            result[lastIndex] = result[lastIndex].replace('</li>', ` ${trimmedLine}</li>`);
+          } else if (result[lastIndex].endsWith('</p>')) {
+            result[lastIndex] = result[lastIndex].replace('</p>', ` ${trimmedLine}</p>`);
+          } else {
+            result.push(`<p>${trimmedLine}</p>`);
+          }
+        } else {
+          result.push(`<p>${trimmedLine}</p>`);
+        }
+      }
+    }
+  }
+  
+  // 处理栈中剩余的内容
+  flushStack(stack, result);
+  
+  return result.join('\n');
+}
+
+// 解析列表项
+function parseListItem(line) {
+  // 匹配有序列表：数字. 内容
+  const orderedMatch = line.match(/^(\s*)(\d+)\.\s+(.*)/);
+  if (orderedMatch) {
+    const indent = orderedMatch[1].length;
+    const number = orderedMatch[2];
+    const content = orderedMatch[3];
+    return { indent, type: 'ordered', number, content };
+  }
+  
+  // 匹配无序列表：- 或 * 开头
+  const unorderedMatch = line.match(/^(\s*)([-*])\s+(.*)/);
+  if (unorderedMatch) {
+    const indent = unorderedMatch[1].length;
+    const marker = unorderedMatch[2];
+    const content = unorderedMatch[3];
+    return { indent, type: 'unordered', marker, content };
+  }
+  
+  return null;
+}
+
+// 刷新栈中的所有列表
+function flushStack(stack, result) {
+  while (stack.length > 1) { // 保留root
+    const item = stack.pop();
+    if (item.type === 'ol' || item.type === 'ul') {
+      result.push(`</${item.type}>`);
+    }
+  }
+}
+
+// 处理段落
+function processParagraphs(markdown) {
+  const lines = markdown.split('\n');
+  let result = [];
+  let currentParagraph = [];
+  
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const trimmedLine = line.trim();
+    
+    if (trimmedLine === '') {
+      // 空行结束当前段落
+      if (currentParagraph.length > 0) {
+        result.push(`<p>${currentParagraph.join(' ')}</p>`);
+        currentParagraph = [];
+      }
+      result.push('');
+    } else if (line.startsWith('<') && 
+              (line.match(/^<h[1-6]>/) || line.startsWith('<ul') || line.startsWith('<ol') || 
+               line.startsWith('<li') || line.startsWith('<table') || line.startsWith('</') ||
+               line.startsWith('<p>') || line.startsWith('<blockquote'))) {
+      // 已经是HTML标签，直接添加
+      if (currentParagraph.length > 0) {
+        result.push(`<p>${currentParagraph.join(' ')}</p>`);
+        currentParagraph = [];
+      }
+      result.push(line);
+    } else {
+      // 添加到当前段落
+      currentParagraph.push(trimmedLine);
+    }
+  }
+  
+  // 处理最后一个段落
+  if (currentParagraph.length > 0) {
+    result.push(`<p>${currentParagraph.join(' ')}</p>`);
+  }
+  
+  return result.join('\n');
+}
+
+// 简化的使用方式
+function renderMarkdown(markdownText, targetElementId) {
+  const html = parseMarkdown(markdownText);
+  const targetElement = document.getElementById(targetElementId);
+  if (targetElement) {
+    targetElement.innerHTML = html;
+  }
+  return html;
+}
+
+// 自动添加样式
+(function() {
+  const style = document.createElement('style');
+  style.textContent = `
+    /* 表格样式 */
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 16px 0;
+      border: 1px solid #ddd;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px 12px;
+      text-align: left;
+    }
+    th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+    }
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    
+    /* 列表样式 */
+    ul, ol {
+      margin: 10px 0;
+      padding-left: 20px;
+    }
+    li {
+      margin: 5px 0;
+      line-height: 1.6;
+    }
+    ul ul, ol ol, ul ol, ol ul {
+      margin-top: 5px;
+      margin-bottom: 5px;
+      padding-left: 20px;
+    }
+    
+    /* 段落样式 */
+    p {
+      margin: 10px 0;
+      line-height: 1.6;
+    }
+    
+    /* 标题样式 */
+    h1, h2, h3, h4, h5, h6 {
+      margin: 20px 0 10px 0;
+      color: #333;
+    }
+    h1 { font-size: 24px; }
+    h2 { font-size: 20px; }
+    h3 { font-size: 18px; }
+    h4 { font-size: 16px; }
+    h5 { font-size: 14px; }
+    h6 { font-size: 12px; }
+    
+    /* 其他样式 */
+    code {
+      background-color: #f5f5f5;
+      padding: 2px 4px;
+      border-radius: 3px;
+      font-family: monospace;
+    }
+    pre {
+      background-color: #f5f5f5;
+      padding: 10px;
+      border-radius: 5px;
+      overflow-x: auto;
+    }
+    blockquote {
+      border-left: 4px solid #ddd;
+      margin: 10px 0;
+      padding-left: 15px;
+      color: #666;
+    }
+    img {
+      max-width: 100%;
+      height: auto;
+    }
+  `;
+  document.head.appendChild(style);
+})();
+    /* ---------- AI问答功能 ---------- */
+    async function aiMatch() {
+      const query = document.getElementById('ai-input').value.trim();
+      if (!query) return;
+      
+      const answerDiv = document.getElementById('ai-result');
+      const contentDiv = document.getElementById('streaming-content');
+      const sendBtn = document.getElementById('ai-send-btn');
+      
+      // 显示回答区域
+      answerDiv.style.display = 'block';
+      contentDiv.innerHTML = '';
+      sendBtn.disabled = true;
+      
+      try {
+        const response = await fetch('http://127.0.0.1:5000/api/task', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ query: query })
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+        }
+
+        if (!response.body) {
+          throw new Error('响应无 body');
+        }
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+        let fullText = '';
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          buffer += decoder.decode(value, { stream: true });
+
+          let newlineIndex;
+          while ((newlineIndex = buffer.indexOf('\n\n')) !== -1) {
+            const eventBlock = buffer.slice(0, newlineIndex).trim();
+            buffer = buffer.slice(newlineIndex + 2);
+
+            if (eventBlock.startsWith('data: ')) {
+              try {
+                const jsonStr = eventBlock.slice(6);
+                const data = JSON.parse(jsonStr);
+
+                if (data.type === 'text') {
+                  fullText += data.data;
+                  contentDiv.innerHTML = parseMarkdown(fullText);
+                  answerDiv.scrollTop = answerDiv.scrollHeight;
+                } else if (data.type === 'done') {
+                  contentDiv.innerHTML = parseMarkdown(fullText);
+                }
+              } catch (e) {
+                console.warn('解析 SSE 数据失败:', eventBlock, e);
+              }
+            }
+          }
+        }
+      } catch (err) {
+        contentDiv.innerHTML = `<div class="error">请求失败: ${err.message}</div>`;
+        console.error('请求失败:', err);
+      } finally {
+        sendBtn.disabled = false;
+      }
+    }
+
+    // 绑定回车键事件
+    document.getElementById('ai-input').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') aiMatch();
+    });
+
+    /* carousel */
+    let slideIndex=0; const slides = document.querySelectorAll('.carousel .slide');
+    function showSlide(n){
+      slideIndex = (n + slides.length)%slides.length;
+      slides.forEach((s,i)=>s.style.transform = `translateX(${(i-slideIndex)*100}%)`);
+    }
+    function carouselNext(){ showSlide(slideIndex+1) }
+    function carouselPrev(){ showSlide(slideIndex-1) }
+    setInterval(()=>carouselNext(),6000);
+
+    /* 搜索示意 */
+    document.getElementById('search-project').addEventListener('keyup',function(e){
+      const q = e.target.value.trim().toLowerCase();
+      const cards = document.querySelectorAll('.project-card');
+      projects.forEach((p,i)=>{
+        const visible = !q || (p.title+p.unit+p.region+p.type).toLowerCase().includes(q);
+        cards[i].style.display = visible ? 'block' : 'none';
+      });
+    });
+
+    /* 初始展示 */
+    showSlide(0);
+  </script>
+</body>
+</html>

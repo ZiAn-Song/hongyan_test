@@ -1,0 +1,31 @@
+{
+  "Company": [
+    {
+      "Company_Name": "山东大学",
+      "Location": "山东",
+      "Email":  "",
+      "Company_Profile": "山东大学是山东最大的大学",
+      "Code": "123123",
+      "Contact_Information": "16631012633",
+      "password": "1231231"
+    },
+   {
+      "Company_Name": "山东大学",
+      "Location": "山东",
+      "Email":  "",
+      "Company_Profile": "山东大学是山东最大的大学",
+      "Code": "123123",
+      "Contact_Information": "16631012633",
+      "password": "1231231"
+    },
+    {
+      "Company_Name": "山东大学",
+      "Location": "山东",
+      "Email":  "",
+      "Company_Profile": "山东大学是山东最大的大学",
+      "Code": "123123",
+      "Contact_Information": "16631012633",
+      "password": "1231231"
+    }
+  ]
+}
