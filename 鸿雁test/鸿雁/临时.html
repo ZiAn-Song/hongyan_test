@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>公司未来发展规划与财务预测</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #F8F5F0;
+            font-family: "Microsoft YaHei", "微软雅黑", sans-serif;
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* 置顶主标题 */
+        .main-header {
+            text-align: center;
+            margin-bottom: 50px;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .main-title {
+            color: #8B7355;
+            font-size: 24px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            position: relative;
+            display: inline-block;
+            padding-bottom: 15px;
+        }
+
+        .main-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #8B7355, transparent);
+        }
+
+        /* 三栏主体布局 */
+        .three-columns {
+            display: flex;
+            justify-content: space-between;
+            gap: 0;
+            margin-bottom: 40px;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 12px;
+            padding: 30px 0;
+            box-shadow: 0 4px 20px rgba(139, 115, 85, 0.08);
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }
+
+        .column {
+            flex: 1;
+            padding: 0 35px;
+            position: relative;
+            transition: all 0.4s ease;
+        }
+
+        .column:hover {
+            transform: translateY(-5px);
+        }
+
+        /* 竖线分隔 */
+        .column:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 10%;
+            height: 80%;
+            width: 1px;
+            background: linear-gradient(to bottom, transparent, #8B7355, transparent);
+            opacity: 0.6;
+        }
+
+        .column-header {
+            color: #8B7355;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(139, 115, 85, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .phase-icon {
+            width: 28px;
+            height: 28px;
+            background: #8B7355;
+            color: #F8F5F0;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .content-item {
+            font-size: 11px;
+            color: #4a4a4a;
+            line-height: 1.8;
+            margin-bottom: 12px;
+            padding-left: 15px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .content-item::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: #8B7355;
+            font-size: 10px;
+        }
+
+        .content-item:hover {
+            color: #8B7355;
+            padding-left: 20px;
+        }
+
+        .highlight-text {
+            color: #8B7355;
+            font-weight: 600;
+        }
+
+        .arrow-indicator {
+            color: #8B7355;
+            font-weight: bold;
+            margin: 0 4px;
+        }
+
+        /* 底部通栏 */
+        .bottom-section {
+            border: 1px solid #8B7355;
+            border-radius: 8px;
+            padding: 25px 40px;
+            text-align: center;
+            background: rgba(139, 115, 85, 0.03);
+            animation: fadeInUp 1s ease-out 0.6s both;
+            transition: all 0.4s ease;
+        }
+
+        .bottom-section:hover {
+            box-shadow: 0 6px 25px rgba(139, 115, 85, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .metrics-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .metric-label {
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .metric-item {
+            font-size: 13px;
+            color: #555;
+        }
+
+        .metric-value {
+            font-weight: bold;
+            color: #8B7355;
+            font-size: 14px;
+        }
+
+        .conclusion {
+            color: #8B7355;
+            font-size: 14px;
+            font-weight: bold;
+            margin-top: 10px;
+            letter-spacing: 1px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .conclusion::before,
+        .conclusion::after {
+            content: '◆';
+            color: #8B7355;
+            opacity: 0.5;
+            margin: 0 10px;
+            font-size: 10px;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 968px) {
+            .three-columns {
+                flex-direction: column;
+                padding: 20px;
+            }
+
+            .column:not(:last-child)::after {
+                display: none;
+            }
+
+            .column {
+                padding: 20px 0;
+                border-bottom: 1px solid rgba(139, 115, 85, 0.2);
+            }
+
+            .column:last-child {
+                border-bottom: none;
+            }
+
+            .metrics-row {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+
+        /* 动画效果 */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 装饰元素 */
+        .decoration-line {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #8B7355, transparent);
+            margin: 30px auto;
+            width: 60%;
+            opacity: 0.3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 置顶居中主标题 -->
+        <header class="main-header">
+            <h1 class="main-title">公司未来发展规划与财务预测</h1>
+        </header>
+
+        <!-- 主体三栏横向布局 -->
+        <div class="three-columns">
+            <!-- 左栏：第一阶段 -->
+            <div class="column">
+                <div class="column-header">
+                    <span class="phase-icon">01</span>
+                    第一阶段（第 1 年）
+                </div>
+                <div class="content-item">
+                    <span class="highlight-text">核心动作：</span>聚焦试点落地
+                </div>
+                <div class="content-item">
+                    <span class="highlight-text">成本结构：</span>研发 + 人力成本为主
+                </div>
+                <div class="content-item">
+                    <span class="highlight-text">融资节点：</span>天使轮 <span class="arrow-indicator">▶</span> 500 万
+                </div>
+                <div class="content-item">
+                    <span class="highlight-text">收入驱动：</span>启动高校 / 政府 / 企业端初步合作
+                </div>
+            </div>
+
+            <!-- 中栏：第二阶段 -->
+            <div class="column">
+                <div class="column-header">
+                    <span class="phase-icon">02</span>
+                    第二阶段（第 2 年起）
+                </div>
+                <div class="content-item">
+                    <span class="highlight-text">核心动作：</span>快速复制推广
+                </div>
+                <div class="content-item">
+                    <span class="highlight-text">成本结构：</span>市场推广 / 维护成本占比提升
+                </div>
+                <div class="content-item">
+                    <span class="highlight-text">融资节点：</span>Pre-A 轮（第 2 年末） <span class="arrow-indicator">▶</span> 800-1200 万
+                </div>
+                <div class="content-item">
+                    <span class="highlight-text">收入增长：</span>营收快速攀升，净利润逐步转正
+                </div>
+                <div class="content-item">
+                    <span class="highlight-text">收入驱动：</span>高校<span class="arrow-indicator">→</span>AI 导师高级功能全流程覆盖；政府<span class="arrow-indicator">→</span>获专项采购 + 政策奖励；企业<span class="arrow-indicator">→</span>CSR 资金升级品牌冠名 / 定制培养
+                </div>
+            </div>
+
+            <!-- 右栏：第三阶段 -->
+            <div class="column">
+                <div class="column-header">
+                    <span class="phase-icon">03</span>
+                    第三阶段（第 4-5 年）
+                </div>
+                <div class="content-item">
+                    <span class="highlight-text">核心动作：</span>全国规模化覆盖
+                </div>
+                <div class="content-item">
+                    <span class="highlight-text">五年目标：</span>覆盖全国 50%"双一"高校 + 30% 边疆地州
+                </div>
+                <div class="content-item">
+                    <span class="highlight-text">融资节点：</span>A 轮 <span class="arrow-indicator">▶</span> 视发展情况定
+                </div>
+                <div class="content-item">
+                    <span class="highlight-text">收入增长：</span>盈利大幅提升，规模化盈利
+                </div>
+                <div class="content-item">
+                    <span class="highlight-text">收入驱动：</span>高校 / 政府 / 企业端高价值合作常态化
+                </div>
+            </div>
+        </div>
+
+        <div class="decoration-line"></div>
+
+        <!-- 底部通栏 -->
+        <div class="bottom-section">
+            <div class="metrics-row">
+                <span class="metric-label">核心投资指标</span>
+                <span class="metric-item">NPV：<span class="metric-value">1926.84 万元</span></span>
+                <span class="metric-item">PI：<span class="metric-value">4.85</span></span>
+                <span class="metric-item">IRR：<span class="metric-value">68%</span></span>
+            </div>
+            <div class="conclusion">核心结论：财务预测稳健，投资回报潜力巨大</div>
+        </div>
+    </div>
+</body>
+</html>

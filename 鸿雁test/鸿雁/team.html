@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>团队信息查看 - 实践项目</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+
+        body {
+            background-color: #f5f9ff;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #9c0c13 0%, #72090e 100%);
+            color: white;
+            padding: 40px 30px;
+            border-radius: 15px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 25px rgba(156, 12, 19, 0.25);
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* 分类筛选区域 */
+        .filter-container {
+            background: white;
+            border-radius: 12px;
+            padding: 25px 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .filter-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .filter-title i {
+            color: #9c0c13;
+        }
+
+        .category-filter {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .category-btn {
+            padding: 10px 20px;
+            background-color: #f0f0f0;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            color: #555;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .category-btn:hover {
+            background-color: #e8e8e8;
+            border-color: #ccc;
+        }
+
+        .category-btn.active {
+            background-color: #9c0c13;
+            border-color: #9c0c13;
+            color: white;
+        }
+
+        .category-count {
+            font-size: 0.85em;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 2px 6px;
+            border-radius: 10px;
+            margin-left: 5px;
+        }
+
+        .category-btn.active .category-count {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .filter-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 10px 25px;
+            background: linear-gradient(135deg, #9c0c13 0%, #72090e 100%);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(156, 12, 19, 0.3);
+        }
+
+        .reset-btn {
+            padding: 10px 20px;
+            background-color: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 500;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .reset-btn:hover {
+            background-color: #f0f0f0;
+        }
+
+        .results-info {
+            margin-bottom: 25px;
+            padding: 15px;
+            background-color: #ffe6e6;
+            border-radius: 10px;
+            color: #9c0c13;
+            font-weight: 500;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .teams-container {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .team-card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            border-left: 6px solid #9c0c13;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .team-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        .team-title {
+            color: #9c0c13;
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .team-title::before {
+            content: "👥";
+            font-size: 1.5rem;
+        }
+
+        .team-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eaeaea;
+        }
+
+        .team-leader {
+            font-size: 1.1rem;
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .team-leader::before {
+            content: "👨‍🎓";
+        }
+
+        .team-university {
+            font-size: 1.1rem;
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .team-university::before {
+            content: "🏫";
+        }
+
+        .team-specialty {
+            font-size: 1.4rem;
+            color: #e63946;
+            font-weight: bold;
+        }
+
+        .team-details {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1rem;
+            color: #666;
+        }
+
+        .detail-item::before {
+            content: "•";
+            color: #9c0c13;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .members-section {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .members-title {
+            font-size: 1.2rem;
+            color: #333;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .members-title::before {
+            content: "👤";
+        }
+
+        .members-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .member-tag {
+            background-color: #e6f0ff;
+            color: #1a6dcc;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .teacher-section {
+            background-color: #f0f7ff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .teacher-title {
+            font-size: 1.2rem;
+            color: #333;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .teacher-title::before {
+            content: "👨‍🏫";
+        }
+
+        .teacher-info {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .teacher-item {
+            background-color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid #e0e6ed;
+        }
+
+        .team-description {
+            margin-bottom: 25px;
+            color: #555;
+            line-height: 1.7;
+            padding: 15px;
+            background-color: #fafafa;
+            border-radius: 8px;
+            border-left: 4px solid #9c0c13;
+        }
+
+        .contact-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 20px;
+            border-top: 1px dashed #ddd;
+        }
+
+        .contact-details {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .contact-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #9c0c13;
+        }
+
+        .contact-tags {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .contact-tag {
+            background-color: #ffe6e6;
+            color: #9c0c13;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .contact-btn {
+            background: linear-gradient(135deg, #9c0c13 0%, #72090e 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(156, 12, 19, 0.3);
+        }
+
+        .contact-btn:hover {
+            background: linear-gradient(135deg, #72090e 0%, #4d0609 100%);
+        }
+
+        .divider {
+            height: 2px;
+            background: linear-gradient(to right, transparent, #9c0c13, transparent);
+            margin: 30px 0;
+            border: none;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid #d9e7ff;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* 加载状态样式 */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #9c0c13;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            text-align: center;
+            padding: 40px;
+            color: #e63946;
+            background-color: #ffe6e6;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 60px;
+            color: #666;
+            font-style: italic;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            margin: 20px 0;
+        }
+
+        /* 状态标签 */
+        .status-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .status-new {
+            background-color: #ffe6e6;
+            color: #9c0c13;
+        }
+
+        /* 分页样式 */
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 40px;
+        }
+
+        .pagination {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .page-btn {
+            padding: 8px 16px;
+            background-color: white;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.95rem;
+            min-width: 40px;
+            text-align: center;
+            color: #4b5563;
+        }
+
+        .page-btn:hover:not(.disabled) {
+            background-color: #f3f4f6;
+            border-color: #9c0c13;
+            color: #9c0c13;
+        }
+
+        .page-btn.active {
+            background-color: #9c0c13;
+            color: white;
+            border-color: #9c0c13;
+        }
+
+        .page-btn.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background-color: #f3f4f6;
+        }
+
+        .page-info {
+            color: #6b7280;
+            font-size: 0.9rem;
+            margin: 0 15px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.2rem;
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .category-filter {
+                justify-content: center;
+            }
+
+            .category-btn {
+                padding: 8px 16px;
+                font-size: 0.9rem;
+            }
+
+            .filter-actions {
+                justify-content: center;
+            }
+
+            .team-info {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .team-details {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .contact-info {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+            }
+
+            .contact-btn {
+                align-self: stretch;
+                text-align: center;
+            }
+
+            .pagination {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .page-info {
+                order: -1;
+                width: 100%;
+                text-align: center;
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header class="header">
+        <h1><i class="fas fa-users"></i> 团队信息 <i class="fas fa-handshake"></i></h1>
+        <p>浏览已注册的团队信息，了解各团队的专业领域和成员构成</p>
+    </header>
+
+    <!-- 分类筛选区域 -->
+    <div class="filter-container">
+        <div class="filter-title">
+            <i class="fas fa-filter"></i> 按专业领域筛选
+        </div>
+        <div class="category-filter" id="categoryFilter">
+            <!-- 动态生成分类按钮 -->
+        </div>
+        <div class="filter-actions">
+            <button class="filter-btn" onclick="applyFilter()">
+                <i class="fas fa-check"></i> 应用筛选
+            </button>
+            <button class="reset-btn" onclick="resetFilter()">
+                <i class="fas fa-redo"></i> 重置筛选
+            </button>
+        </div>
+    </div>
+
+    <!-- 结果信息 -->
+    <div id="resultsInfo" class="results-info" style="display: none;">
+        <span>找到 <span id="resultCount">0</span> 个相关团队</span>
+        <span>显示第 <span id="displayRange">1-4</span> 个团队</span>
+    </div>
+
+    <!-- 加载状态 -->
+    <div id="loading" class="loading">
+        <div class="spinner"></div>
+        <p>正在加载团队数据...</p>
+    </div>
+
+    <!-- 错误显示 -->
+    <div id="error" class="error" style="display: none;">
+        <i class="fas fa-exclamation-triangle" style="font-size: 2rem; margin-bottom: 15px;"></i>
+        <p id="error-message">数据加载失败，请稍后重试</p>
+        <button onclick="loadData()" style="margin-top: 15px; padding: 8px 20px; background: #9c0c13; color: white; border: none; border-radius: 5px; cursor: pointer;">
+            重新加载
+        </button>
+    </div>
+
+    <!-- 团队列表容器 -->
+    <main class="teams-container" id="teams-list" style="display: none;">
+        <!-- 动态生成团队卡片 -->
+    </main>
+
+    <!-- 分页容器 -->
+    <div id="pagination-container" class="pagination-container" style="display: none;">
+        <div class="pagination">
+            <button class="page-btn prev-btn" onclick="changePage(currentPage - 1)">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <span class="page-info">第 <span id="current-page">1</span> 页 / 共 <span id="total-pages">1</span> 页</span>
+            <button class="page-btn next-btn" onclick="changePage(currentPage + 1)">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>山东大学实践服务平台 - 团队信息展示</p>
+        <p style="margin-top: 10px; font-size: 0.85rem;">数据来源于团队提交的注册信息，实时更新</p>
+    </footer>
+
+    <script>
+        // 全局变量
+        let allTeams = [];
+        let filteredTeams = [];
+        let currentPage = 1;
+        const itemsPerPage = 4; // 每页固定显示4个团队
+        let selectedCategory = '全部';
+
+        // 预定义的专业领域分类
+        const categories = [
+            '全部',
+            '医疗健康',
+            '基础建设',
+            '教育民生',
+            '基层治理',
+            '文旅',
+            '环境',
+        ];
+
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', loadData);
+
+        async function loadData() {
+            const loadingEl = document.getElementById('loading');
+            const errorEl = document.getElementById('error');
+            const listingsEl = document.getElementById('teams-list');
+            const paginationContainer = document.getElementById('pagination-container');
+            const resultsInfo = document.getElementById('resultsInfo');
+
+            loadingEl.style.display = 'block';
+            errorEl.style.display = 'none';
+            listingsEl.style.display = 'none';
+            paginationContainer.style.display = 'none';
+            resultsInfo.style.display = 'none';
+
+            try {
+                const response = await fetch('http://127.0.0.1:5000/api/read', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        filename: "Team_Announcement"
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+                }
+
+                const result = await response.json();
+                allTeams = result.data.TEAM || [];
+
+                loadingEl.style.display = 'none';
+
+                if (allTeams.length === 0) {
+                    // 显示无数据提示
+                    listingsEl.style.display = 'flex';
+                    listingsEl.innerHTML = `
+                        <div class="no-data">
+                            <i class="fas fa-users" style="font-size: 4rem; margin-bottom: 20px; color: #ddd;"></i>
+                            <h3>暂无团队信息</h3>
+                            <p>当前没有团队提交信息</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // 初始化分类筛选器（这会自动触发筛选）
+                initCategoryFilter();
+
+            } catch (error) {
+                console.error('加载数据失败:', error);
+                loadingEl.style.display = 'none';
+                errorEl.style.display = 'block';
+                document.getElementById('error-message').textContent = `数据加载失败: ${error.message}`;
+            }
+        }
+
+        function initCategoryFilter() {
+            const categoryFilterEl = document.getElementById('categoryFilter');
+            categoryFilterEl.innerHTML = '';
+
+            // 统计每个分类的团队数量
+            const categoryCounts = {};
+            categories.forEach(cat => categoryCounts[cat] = 0);
+
+            // 统计每个分类的团队数量
+            allTeams.forEach(team => {
+                const teamSpecialty = team.teamSpecialty || '未指定';
+                if (categories.includes(teamSpecialty)) {
+                    categoryCounts[teamSpecialty]++;
+                } else {
+                    categoryCounts['其他']++;
+                }
+            });
+            categoryCounts['全部'] = allTeams.length;
+
+            // 生成分类按钮
+            categories.forEach(category => {
+                const button = document.createElement('button');
+                button.className = 'category-btn' + (category === '全部' ? ' active' : '');
+                button.innerHTML = `
+                    ${category}
+                    <span class="category-count">${categoryCounts[category] || 0}</span>
+                `;
+
+                // 为按钮添加点击事件
+                button.onclick = () => {
+                    // 更新所有按钮状态
+                    document.querySelectorAll('.category-btn').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    // 为当前按钮添加 active 类
+                    button.classList.add('active');
+                    selectedCategory = category;
+                    // 立即应用筛选
+                    applyFilter();
+                };
+
+                categoryFilterEl.appendChild(button);
+            });
+
+            // 初始化后立即应用筛选（显示"全部"分类）
+            applyFilter();
+        }
+
+        function applyFilter() {
+            // 筛选团队
+            if (selectedCategory === '全部') {
+                filteredTeams = allTeams;
+            } else if (selectedCategory === '其他') {
+                filteredTeams = allTeams.filter(team => {
+                    const teamSpecialty = team.teamSpecialty || '未指定';
+                    return !categories.slice(1, -1).includes(teamSpecialty);
+                });
+            } else {
+                filteredTeams = allTeams.filter(team => {
+                    const teamSpecialty = team.teamSpecialty || '未指定';
+                    return teamSpecialty === selectedCategory;
+                });
+            }
+
+            // 重置到第一页
+            currentPage = 1;
+
+            // 显示结果信息
+            updateResultsInfo();
+
+            // 渲染团队
+            renderPage();
+        }
+
+        function resetFilter() {
+            // 重置为"全部"
+            const categoryButtons = document.querySelectorAll('.category-btn');
+            categoryButtons.forEach(btn => {
+                if (btn.textContent.includes('全部')) {
+                    btn.classList.add('active');
+                    selectedCategory = '全部';
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            // 立即应用筛选
+            applyFilter();
+        }
+
+        function updateResultsInfo() {
+            const resultsInfo = document.getElementById('resultsInfo');
+            const resultCount = document.getElementById('resultCount');
+            const displayRange = document.getElementById('displayRange');
+
+            if (filteredTeams.length === 0) {
+                resultsInfo.style.display = 'none';
+                return;
+            }
+
+            resultsInfo.style.display = 'flex';
+            resultCount.textContent = filteredTeams.length;
+
+            const startIndex = (currentPage - 1) * itemsPerPage + 1;
+            const endIndex = Math.min(currentPage * itemsPerPage, filteredTeams.length);
+            displayRange.textContent = `${startIndex}-${endIndex}`;
+        }
+
+        function renderPage() {
+            const listingsEl = document.getElementById('teams-list');
+            const paginationContainer = document.getElementById('pagination-container');
+            const resultsInfo = document.getElementById('resultsInfo');
+
+            listingsEl.innerHTML = '';
+
+            if (filteredTeams.length === 0) {
+                listingsEl.style.display = 'flex';
+                paginationContainer.style.display = 'none';
+                resultsInfo.style.display = 'none';
+                listingsEl.innerHTML = `
+                    <div class="no-data">
+                        <i class="fas fa-search" style="font-size: 4rem; margin-bottom: 20px; color: #ddd;"></i>
+                        <h3>未找到相关团队</h3>
+                        <p>在"${selectedCategory}"分类下没有找到团队信息</p>
+                        <button class="reset-btn" onclick="resetFilter()" style="margin-top: 20px; padding: 10px 20px;">
+                            <i class="fas fa-redo"></i> 返回全部团队
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            listingsEl.style.display = 'flex';
+
+            // 计算总页数
+            const totalPages = Math.ceil(filteredTeams.length / itemsPerPage);
+
+            // 计算当前页的团队
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = Math.min(currentPage * itemsPerPage, filteredTeams.length);
+            const displayTeams = filteredTeams.slice(startIndex, endIndex);
+
+            // 渲染当前页的团队
+            displayTeams.forEach((team, index) => {
+                // 解析数据，使用合理的默认值
+                const teamName = team.teamName || '未命名团队';
+                const leaderName = team.leaderName || '未知';
+                const studentId = team.studentId || '未知';
+                const university = team.university || '未知高校';
+                const leaderContact = team.leaderContact || '未提供';
+                const leaderEmail = team.leaderEmail || '未提供';
+                const teacherName = team.teacherName || '未指定';
+                const teacherContact = team.teacherContact || '未提供';
+                const teamSpecialty = team.teamSpecialty || '未指定';
+                const teamDescription = team.teamDescription || '暂无描述';
+                const memberNames = team.memberNames || [];
+
+                // 处理指导老师信息
+                let teacherInfo = [];
+                if (team.Advising_Teacher && Array.isArray(team.Advising_Teacher)) {
+                    teacherInfo = team.Advising_Teacher;
+                } else if (teacherName !== '未指定') {
+                    teacherInfo = [{ "Teacher Name": teacherName, "Teacher Contact Information": teacherContact }];
+                }
+
+                // 创建团队卡片
+                const card = document.createElement('article');
+                card.className = 'team-card';
+                card.innerHTML = `
+                    <h2 class="team-title">
+                        ${teamName}
+                        <span class="status-tag status-new">${teamSpecialty}</span>
+                    </h2>
+
+                    <div class="team-info">
+                        <div class="team-leader">负责人: ${leaderName} (${studentId})</div>
+                        <div class="team-university">${university}</div>
+                        <div class="team-specialty">${teamSpecialty}</div>
+                    </div>
+
+                    <div class="team-details">
+                        <div class="detail-item">负责人电话: ${leaderContact}</div>
+                        <div class="detail-item">负责人邮箱: ${leaderEmail}</div>
+                        ${teacherName !== '未指定' ? `<div class="detail-item">指导老师: ${teacherName}</div>` : ''}
+                    </div>
+
+                    <div class="members-section">
+                        <div class="members-title">团队成员 (${memberNames.length}人)</div>
+                        <div class="members-list">
+                            ${memberNames.map(member =>
+                                `<span class="member-tag">${member}</span>`
+                            ).join('')}
+                        </div>
+                    </div>
+
+                    ${teacherInfo.length > 0 ? `
+                    <div class="teacher-section">
+                        <div class="teacher-title">指导老师信息</div>
+                        <div class="teacher-info">
+                            ${teacherInfo.map(teacher => `
+                                <div class="teacher-item">
+                                    <strong>${teacher["Teacher Name"] || '未命名'}</strong><br>
+                                    联系方式: ${teacher["Teacher Contact Information"] || '未提供'}
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    ` : ''}
+
+                    <div class="team-description">
+                        <p>${teamDescription}</p>
+                    </div>
+
+                    <div class="contact-info">
+                        <div class="contact-details">
+                            <span class="contact-name">${leaderName}</span>
+                            <div class="contact-tags">
+                                <span class="contact-tag">负责人</span>
+                                <span class="contact-tag">${university}</span>
+                                <span class="contact-tag">${teamSpecialty}</span>
+                            </div>
+                        </div>
+                        <button class="contact-btn" onclick="contactTeam('${teamName}', '${leaderContact}', '${leaderEmail}')">
+                            <i class="fas fa-envelope"></i> 联系团队
+                        </button>
+                    </div>
+                `;
+
+                listingsEl.appendChild(card);
+
+                // 添加分隔线
+                if (index < displayTeams.length - 1) {
+                    const divider = document.createElement('hr');
+                    divider.className = 'divider';
+                    listingsEl.appendChild(divider);
+                }
+            });
+
+            // 更新分页信息
+            updatePagination(totalPages);
+        }
+
+        function updatePagination(totalPages) {
+            const paginationContainer = document.getElementById('pagination-container');
+            const currentPageEl = document.getElementById('current-page');
+            const totalPagesEl = document.getElementById('total-pages');
+            const prevBtn = document.querySelector('.prev-btn');
+            const nextBtn = document.querySelector('.next-btn');
+
+            // 更新页码信息
+            currentPageEl.textContent = currentPage;
+            totalPagesEl.textContent = totalPages;
+
+            // 更新按钮状态
+            prevBtn.disabled = currentPage === 1;
+            nextBtn.disabled = currentPage === totalPages;
+
+            if (prevBtn.disabled) {
+                prevBtn.classList.add('disabled');
+            } else {
+                prevBtn.classList.remove('disabled');
+            }
+
+            if (nextBtn.disabled) {
+                nextBtn.classList.add('disabled');
+            } else {
+                nextBtn.classList.remove('disabled');
+            }
+
+            // 显示或隐藏分页容器（只有当有多页时才显示）
+            if (totalPages > 1) {
+                paginationContainer.style.display = 'flex';
+            } else {
+                paginationContainer.style.display = 'none';
+            }
+        }
+
+        function changePage(page) {
+            const totalPages = Math.ceil(filteredTeams.length / itemsPerPage);
+
+            if (page < 1 || page > totalPages) {
+                return;
+            }
+
+            currentPage = page;
+            renderPage();
+
+            // 滚动到顶部
+            window.scrollTo({
+                top: document.querySelector('.filter-container').offsetTop - 20,
+                behavior: 'smooth'
+            });
+        }
+
+        function contactTeam(teamName, contactInfo, email) {
+            let contactText = `联系团队: ${teamName}\n\n`;
+            contactText += `联系电话: ${contactInfo}\n`;
+            if (email && email !== '未提供') {
+                contactText += `联系邮箱: ${email}\n`;
+            }
+            contactText += `\n您可以通过以上方式联系该团队负责人进行合作洽谈。`;
+
+            alert(contactText);
+        }
+    </script>
+</body>
+</html>

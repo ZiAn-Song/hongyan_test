@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>暖金棕 · 一二三 | 墨韵细节</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #cbb59e;
+            background-image: radial-gradient(circle at 10% 20%, #e0cfbe 4%, transparent 30%),
+                              radial-gradient(circle at 95% 80%, #d2bba6 5%, transparent 35%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-family: '华文楷体', 'KaiTi', '楷体', 'Microsoft YaHei', 'STKaiti', serif;
+            padding: 24px 16px 40px;
+        }
+
+        .title-wrapper {
+            text-align: center;
+            margin-bottom: 28px;
+            position: relative;
+        }
+
+        .main-seal {
+            color: #8B7355;
+            font-size: 1.2rem;
+            border: 1.5px solid #b19375;
+            display: inline-block;
+            padding: 6px 24px 6px 28px;
+            border-radius: 40px 8px 40px 8px;
+            background: #f9efdf;
+            transform: rotate(-0.5deg);
+            box-shadow: 0 4px 12px rgba(110, 75, 45, 0.15);
+            letter-spacing: 6px;
+            font-weight: 400;
+            margin-bottom: 10px;
+        }
+
+        .sub-title {
+            color: #6f5b48;
+            font-size: 0.85rem;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            border-bottom: 1px solid #cbbaa9;
+            padding-bottom: 8px;
+            width: fit-content;
+            margin: 0 auto;
+            padding-left: 16px;
+            padding-right: 16px;
+            font-weight: 300;
+        }
+
+        .gallery-detailed {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 35px 45px;
+            max-width: 1200px;
+            margin: 20px 0 30px;
+        }
+
+        /* 增强卡片 — 保留所有细节，增加墨韵层 */
+        .scroll-card {
+            flex: 0 0 auto;
+            width: 280px;
+            max-width: 88vw;
+            background: #fcf3e5;
+            padding: 16px 16px 20px 16px;
+            border-radius: 2px 2px 32px 32px;
+            box-shadow:
+                0 15px 30px -12px #614b38,
+                0 0 0 1px #cbb296 inset,
+                0 0 0 5px #f0e1d2,
+                0 0 0 6px #cdbbaa;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .scroll-card:hover {
+            transform: translateY(-8px);
+            box-shadow:
+                0 22px 36px -14px #3e2e20,
+                0 0 0 1px #ba9d80 inset,
+                0 0 0 6px #ead7c4,
+                0 0 0 7px #b8a087;
+        }
+
+        /* 天头绫子 */
+        .scroll-card::before {
+            content: "";
+            position: absolute;
+            top: 10px;
+            left: 24px;
+            right: 24px;
+            height: 14px;
+            background: linear-gradient(90deg, #ab8e72, #dcc9b4, #9f8266, #e5d1bc, #b59576);
+            background-size: 200% 100%;
+            border-radius: 20px;
+            opacity: 0.7;
+            box-shadow: 0 2px 5px #7a624a;
+            border: 1px solid #ebdcca;
+        }
+
+        /* 地头绫 */
+        .scroll-card::after {
+            content: "";
+            position: absolute;
+            bottom: 12px;
+            left: 32px;
+            right: 32px;
+            height: 8px;
+            background: repeating-linear-gradient(45deg, #cbb59b 0px, #cbb59b 4px, #e2cfbb 4px, #e2cfbb 8px);
+            border-radius: 10px;
+            opacity: 0.5;
+            border-bottom: 1px solid #f1e2d2;
+        }
+
+        /* 画心：保留洒金、冰裂，增加墨迹飞白层 */
+        .art-paper-rich {
+            background: #fffbf3;
+            border: 1px solid #dabd9f;
+            padding: 24px 12px 16px 12px;
+            box-shadow: inset 0 0 0 2px #f5ede2, inset 0 0 12px #d1bba6, 0 6px 10px rgba(139, 115, 85, 0.2);
+            border-radius: 1px;
+            position: relative;
+            /* 基础宣纸色 + 洒金 + 冰裂 + 水渍 (保留) */
+            background-color: #fffaf2;
+            background-image:
+                /* 洒金箔点 */
+                radial-gradient(circle at 15% 22%, #e6d2b0 1px, transparent 1.5px),
+                radial-gradient(circle at 72% 48%, #e3cbaa 1px, transparent 2px),
+                radial-gradient(circle at 33% 81%, #f3e2c4 2px, transparent 3px),
+                radial-gradient(circle at 91% 16%, #dcc096 1px, transparent 2px),
+                /* 冰裂纹 */
+                repeating-linear-gradient(35deg, rgba(170, 135, 100, 0.08) 0px, rgba(170, 135, 100, 0) 2px, transparent 4px, rgba(150, 115, 75, 0.03) 6px),
+                /* 水渍晕痕 */
+                radial-gradient(ellipse at 45% 55%, rgba(200, 165, 125, 0.1) 0%, transparent 30%),
+                radial-gradient(ellipse at 70% 28%, rgba(180, 140, 95, 0.08) 0%, transparent 35%);
+            background-size: 60px 60px, 60px 60px, 100px 100px, 80px 80px, 40px 40px, 200px 200px, 250px 250px;
+            background-blend-mode: overlay, normal, normal;
+        }
+
+        /* 毛笔大字容器 - 增加墨韵伪元素层 */
+        .character-box {
+            min-height: 190px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 8px 0 8px;
+            background: transparent;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* 大字的样式 — 主色调 #8B7355 暖金棕 */
+        .big-character {
+            font-size: 148px;
+            font-weight: 550;
+            color: #8B7355;
+            text-shadow:
+                2px 2px 0 #f1e4d6,
+                5px 6px 12px rgba(110, 70, 40, 0.3),
+                -1px -1px 0 rgba(255, 245, 235, 0.5);
+            line-height: 1;
+            font-family: '华文行楷', 'STXingkai', 'KaiTi', '华文楷体', cursive, serif;
+            letter-spacing: -8px;
+            filter: drop-shadow(0 4px 4px #dac5b1);
+            transition: all 0.2s;
+            position: relative;
+            z-index: 3;
+        }
+
+        /* ----- 新增墨韵效果：飞白、渗化、墨点 (使用伪元素) ----- */
+        .character-box::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background-repeat: no-repeat;
+            opacity: 0.35;
+            mix-blend-mode: multiply;
+            z-index: 4;
+        }
+
+        /* 为每个字定制不同的墨迹飞白和渗化点，让墨韵更自然 */
+        .detail-1 .character-box::before {
+            background-image:
+                /* 飞白笔触 (模仿墨干时的刷痕) */
+                radial-gradient(ellipse at 30% 45%, #5a4733 0px, transparent 15px),
+                radial-gradient(ellipse at 65% 30%, #4d3e2c 0px, transparent 25px),
+                radial-gradient(circle at 20% 70%, #3f3222 1px, transparent 3px),
+                radial-gradient(circle at 80% 60%, #4f3b26 2px, transparent 6px),
+                /* 细碎墨点 */
+                radial-gradient(circle at 45% 20%, #2f251b 1px, transparent 2px),
+                radial-gradient(circle at 55% 85%, #382c1f 1px, transparent 2px),
+                radial-gradient(circle at 75% 40%, #4d3623 2px, transparent 4px);
+            background-size: 100px 100px, 150px 150px, 60px 60px, 80px 80px, 40px 40px, 40px 40px, 70px 70px;
+            background-position: 0% 0%;
+        }
+
+        .detail-2 .character-box::before {
+            background-image:
+                /* 飞白横向 */
+                radial-gradient(ellipse at 40% 55%, #624e38 0px, transparent 30px),
+                radial-gradient(ellipse at 70% 35%, #4e3b28 0px, transparent 22px),
+                radial-gradient(circle at 25% 25%, #3d2e1d 2px, transparent 5px),
+                radial-gradient(circle at 85% 70%, #46321f 1px, transparent 4px),
+                /* 渗化墨点 */
+                radial-gradient(circle at 50% 40%, #2f241a 1px, transparent 3px),
+                radial-gradient(circle at 30% 80%, #3d2c1b 2px, transparent 5px),
+                radial-gradient(circle at 60% 15%, #4e3823 1px, transparent 3px);
+            background-size: 130px 130px, 100px 100px, 70px 70px, 90px 90px, 50px 50px, 70px 70px, 40px 40px;
+        }
+
+        .detail-3 .character-box::before {
+            background-image:
+                /* 三的墨韵更丰富 */
+                radial-gradient(ellipse at 55% 45%, #6b533b 0px, transparent 35px),
+                radial-gradient(ellipse at 30% 65%, #4f3e2b 0px, transparent 28px),
+                radial-gradient(ellipse at 75% 20%, #3b2e1f 0px, transparent 18px),
+                radial-gradient(circle at 20% 30%, #3e2e1d 1px, transparent 4px),
+                radial-gradient(circle at 90% 55%, #4f3924 2px, transparent 5px),
+                radial-gradient(circle at 45% 80%, #35281a 1px, transparent 3px),
+                radial-gradient(circle at 10% 75%, #4c3521 1px, transparent 3px);
+            background-size: 150px 150px, 120px 120px, 100px 100px, 60px 60px, 80px 80px, 50px 50px, 40px 40px;
+        }
+
+        /* 再加一层极淡的墨晕 (水渗感) */
+        .character-box::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at 40% 50%, rgba(80, 60, 40, 0.1) 0%, transparent 60%),
+                      radial-gradient(ellipse at 70% 30%, rgba(70, 50, 30, 0.08) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 2;
+            mix-blend-mode: multiply;
+        }
+
+        /* 每个字微调旋转 */
+        .detail-1 .big-character {
+            transform: rotate(-1.2deg) scale(1.02);
+        }
+        .detail-2 .big-character {
+            transform: rotate(0.4deg) scale(1.02);
+            letter-spacing: -2px;
+        }
+        .detail-3 .big-character {
+            transform: rotate(-0.3deg) scale(1.02);
+            letter-spacing: -6px;
+        }
+
+        /* 印章区域 (保留之前细节) */
+        .seal-area {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-top: 12px;
+            padding: 0 6px 0 12px;
+            position: relative;
+            z-index: 5;
+        }
+
+        .left-seals {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .name-seal {
+            font-size: 0.7rem;
+            color: #7a6049;
+            border: 0.5px solid #b19373;
+            padding: 3px 6px 3px 8px;
+            background: #fcf1e1;
+            border-radius: 16px 2px 16px 2px;
+            transform: rotate(-1deg);
+            font-family: '华文楷体', serif;
+            box-shadow: 0 2px 4px #d7bea6;
+            letter-spacing: 1px;
+        }
+
+        .leisure-seal {
+            font-size: 0.95rem;
+            color: #9e7a58;
+            width: 28px;
+            height: 28px;
+            border: 1.5px solid #a58463;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 2px 12px 2px 12px;
+            background: #fbefde;
+            transform: rotate(2deg);
+            font-family: '华文楷体', serif;
+            box-shadow: inset 0 0 0 1px #f4e7d8;
+        }
+
+        .corner-seal {
+            font-size: 1.1rem;
+            color: #8f6e4f;
+            width: 36px;
+            height: 36px;
+            border: 2px solid #b48f6b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 40% 10% 40% 10%;
+            background: #f9ecdb;
+            transform: rotate(-4deg);
+            font-family: '华文楷体', serif;
+            margin-bottom: -2px;
+            box-shadow: 0 3px 6px #cbb295;
+        }
+
+        .inscription-rich {
+            text-align: right;
+            margin-top: 16px;
+            padding-right: 18px;
+            font-size: 0.7rem;
+            color: #916f51;
+            border-top: 1px dashed #c2a889;
+            padding-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-style: italic;
+            letter-spacing: 0.5px;
+            position: relative;
+            z-index: 5;
+        }
+
+        .inscription-left {
+            font-size: 0.6rem;
+            color: #ab8b6f;
+            border-left: 2px solid #c8aa8b;
+            padding-left: 8px;
+            opacity: 0.85;
+        }
+
+        .inscription-right {
+            font-size: 0.6rem;
+            background: #f0e0ce;
+            padding: 4px 12px;
+            border-radius: 20px 2px 20px 2px;
+            color: #7a5f46;
+            box-shadow: inset 0 1px 3px #fffcf5, 0 2px 4px #dac2ad;
+        }
+
+        .axis-left, .axis-right {
+            position: absolute;
+            bottom: 6px;
+            width: 14px;
+            height: 40px;
+            background: radial-gradient(ellipse at center, #9b846c, #624e3b);
+            border-radius: 20px;
+            box-shadow: 0 4px 6px #493e32;
+            border: 1px solid #b7a084;
+            z-index: 6;
+        }
+
+        .axis-left {
+            left: -6px;
+            transform: rotate(2deg);
+        }
+
+        .axis-right {
+            right: -6px;
+            transform: rotate(-2deg);
+        }
+
+        .signature-line {
+            display: flex;
+            justify-content: center;
+            gap: 28px;
+            margin-top: 30px;
+            color: #7f684f;
+            font-size: 0.75rem;
+        }
+
+        .signature-line div {
+            border-bottom: 1px dotted #cbb294;
+            padding-bottom: 4px;
+        }
+
+        .footer-note-detail {
+            color: #6a523e;
+            margin-top: 45px;
+            font-size: 0.7rem;
+            border-top: 1px solid #ab8d70;
+            padding-top: 18px;
+            width: 65%;
+            text-align: center;
+            opacity: 0.8;
+            letter-spacing: 2px;
+            font-weight: 300;
+        }
+
+        .scroll-card:hover .art-paper-rich {
+            box-shadow: inset 0 0 0 2px #faf0e3, inset 0 0 18px #d4bb9f, 0 8px 14px #967b61;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="title-wrapper">
+        <div class="main-seal">暖金棕 · 墨韵</div>
+        <div class="sub-title">一 二 三   ·   笔 墨 精 微</div>
+    </div>
+
+    <div class="gallery-detailed">
+
+        <!-- 卡片 一 增加墨韵 -->
+        <div class="scroll-card detail-1">
+            <div class="axis-left"></div>
+            <div class="axis-right"></div>
+            <div class="art-paper-rich">
+                <div class="character-box">
+                    <div class="big-character">一</div>
+                </div>
+                <div class="seal-area">
+                    <div class="left-seals">
+                        <div class="name-seal">虚斋</div>
+                        <div class="leisure-seal">☰</div>
+                    </div>
+                    <div class="corner-seal">⚲</div>
+                </div>
+            </div>
+            <div class="inscription-rich">
+                <span class="inscription-left">天 一 生 水 · 太 初</span>
+                <span class="inscription-right">长 物</span>
+            </div>
+        </div>
+
+        <!-- 卡片 二 增加墨韵 -->
+        <div class="scroll-card detail-2">
+            <div class="axis-left"></div>
+            <div class="axis-right"></div>
+            <div class="art-paper-rich">
+                <div class="character-box">
+                    <div class="big-character">二</div>
+                </div>
+                <div class="seal-area">
+                    <div class="left-seals">
+                        <div class="name-seal">双清</div>
+                        <div class="leisure-seal">⚊⚊</div>
+                    </div>
+                    <div class="corner-seal">印</div>
+                </div>
+            </div>
+            <div class="inscription-rich">
+                <span class="inscription-left">地 二 生 火 · 两 仪</span>
+                <span class="inscription-right">赏 心</span>
+            </div>
+        </div>
+
+        <!-- 卡片 三 增加墨韵 -->
+        <div class="scroll-card detail-3">
+            <div class="axis-left"></div>
+            <div class="axis-right"></div>
+            <div class="art-paper-rich">
+                <div class="character-box">
+                    <div class="big-character">三</div>
+                </div>
+                <div class="seal-area">
+                    <div class="left-seals">
+                        <div class="name-seal">三希</div>
+                        <div class="leisure-seal">☰☰</div>
+                    </div>
+                    <div class="corner-seal">⚭</div>
+                </div>
+            </div>
+            <div class="inscription-rich">
+                <span class="inscription-left">三 生 万 物 · 乾 坤</span>
+                <span class="inscription-right">永 宝</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="signature-line">
+        <div>▸ 墨韵飞白</div>
+        <div>▸ 渗化墨点</div>
+        <div>▸ 双轴头</div>
+        <div>▸ 三套印</div>
+    </div>
+
+    <div class="footer-note-detail">
+        <span>⚘ 暖金棕 #8B7355  ·  墨色氤氲  ·  飞白渗化  ⚘</span><br>
+        <span style="font-size:0.6rem; opacity:0.5;">一 二 三 · 墨韵三叠  ·  笔意盎然</span>
+    </div>
+
+    <div style="color: #a98d72; font-size: 0.55rem; margin-top: 20px; letter-spacing: 3px;">⦿ 甲辰年  ·  摹古  ·  墨迹飞白  ⦿</div>
+</body>
+</html>

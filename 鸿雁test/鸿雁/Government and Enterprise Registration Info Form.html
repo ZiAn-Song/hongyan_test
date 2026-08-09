@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>政企信息收集表</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+
+        body {
+            background-color: #f0f2f5;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1600px;
+            background-color: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        header {
+            background-color: rgb(156, 12, 19);
+            color: white;
+            padding: 35px 30px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            letter-spacing: 0.5px;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            font-weight: 300;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .form-container {
+            padding: 35px;
+        }
+
+        .form-group {
+            margin-bottom: 28px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 1.05rem;
+        }
+
+        .required::after {
+            content: " *";
+            color: #dc2626;
+        }
+
+        input[type="text"],
+        input[type="tel"],
+        input[type="email"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 15px 18px;
+            border: 2px solid #cbd5e1;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background-color: #f8fafc;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            border-color: rgba(30, 58, 138, 0.8);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
+            background-color: white;
+        }
+
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+            line-height: 1.5;
+        }
+
+        .radio-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+            margin-top: 8px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+        }
+
+        .radio-option input {
+            margin-right: 10px;
+            width: 18px;
+            height: 18px;
+            accent-color: #1e3a8a;
+        }
+
+        .radio-option label {
+            margin-bottom: 0;
+            font-weight: normal;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .btn {
+            padding: 16px 32px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .submit-btn {
+            background-color: rgba(156, 12, 19, 1);
+            color: white;
+            font-size: 18px;
+            padding: 18px;
+            border-radius: 10px;
+            margin-top: 15px;
+            letter-spacing: 0.5px;
+            width: 100%;
+        }
+
+        .submit-btn:hover {
+            background: linear-gradient(to right, rgba(23, 37, 84, 0.9), rgba(30, 41, 59, 0.9));
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(30, 58, 138, 0.25);
+        }
+
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+        }
+
+        .form-col {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .instructions {
+            background-color: rgba(241, 245, 249, 0.7);
+            border-left: 4px solid rgba(156, 12, 19, 1);
+            padding: 18px;
+            margin-bottom: 30px;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .instructions h3 {
+            margin-bottom: 10px;
+            color: #1e3a8a;
+            display: flex;
+            align-items: center;
+            font-size: 1.15rem;
+        }
+
+        .instructions p {
+            color: #475569;
+        }
+
+        footer {
+            text-align: center;
+            padding: 25px;
+            color: #64748b;
+            font-size: 0.95rem;
+            border-top: 1px solid #e2e8f0;
+            margin-top: 20px;
+            background-color: #f8fafc;
+        }
+
+        .validation-message {
+            font-size: 0.9rem;
+            margin-top: 6px;
+            display: flex;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .validation-message.show {
+            opacity: 1;
+        }
+
+        .validation-message.error {
+            color: #dc2626;
+        }
+
+        .validation-message.success {
+            color: #16a34a;
+        }
+
+        .validation-icon {
+            margin-right: 6px;
+            font-size: 0.9rem;
+        }
+
+        .char-counter {
+            text-align: right;
+            font-size: 0.9rem;
+            color: #64748b;
+            margin-top: 6px;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+
+            .form-col {
+                flex: 1 1 100%;
+            }
+
+            header {
+                padding: 25px 20px;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .form-container {
+                padding: 25px;
+            }
+
+            body {
+                padding: 10px;
+            }
+        }
+
+        /* 自定义下拉箭头 */
+        select {
+            appearance: none;
+            background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="%23333" viewBox="0 0 256 256"><path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            background-size: 16px;
+            padding-right: 45px;
+        }
+
+        .success-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .success-modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 40px;
+            border-radius: 16px;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transform: translateY(-20px);
+            transition: transform 0.3s ease;
+        }
+
+        .success-modal.show .modal-content {
+            transform: translateY(0);
+        }
+
+        .input-with-icon {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: 1.1rem;
+        }
+    </style>
+    <!-- 引入图标库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-landmark"></i> 政企信息收集表</h1>
+            <p class="subtitle">请准确填写政府或企业的基本信息，所有带 * 的字段为必填项</p>
+        </header>
+
+        <div class="form-container">
+            <div class="instructions">
+                <h3><i class="fas fa-info-circle"></i> 填写说明</h3>
+                <p>本表单用于收集政府机构或企业单位的基本信息。请确保填写的信息真实有效，我们将严格遵守信息保密规定，仅用于信息备案和联系使用。</p>
+            </div>
+
+            <form id="govEnterpriseForm">
+                <div class="form-group">
+                    <label for="orgType" class="required">机构类型</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="government" name="orgType" value="政府机构" required checked>
+                            <label for="government">政府机构</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="enterprise" name="orgType" value="企业单位">
+                            <label for="enterprise">企业单位</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="institution" name="orgType" value="事业单位">
+                            <label for="institution">事业单位</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="organization" name="orgType" value="社会组织">
+                            <label for="organization">社会组织</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="orgName" class="required">政府/企业名称</label>
+                    <div class="input-with-icon">
+                        <input type="text" id="orgName" name="orgName" required placeholder="请输入完整的机构名称">
+                        <span class="input-icon"><i class="fas fa-building"></i></span>
+                    </div>
+                    <div class="validation-message" id="orgNameValidation"></div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label for="adminLocation" class="required">行政地点</label>
+                            <div class="input-with-icon">
+                                <input type="text" id="adminLocation" name="adminLocation" required
+                                    placeholder="省/市/区/详细地址">
+                                <span class="input-icon"><i class="fas fa-map-marker-alt"></i></span>
+                            </div>
+                            <div class="validation-message" id="locationValidation"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label for="adminCode" class="required">行政编码</label>
+                            <div class="input-with-icon">
+                                <input type="text" id="adminCode" name="adminCode" required placeholder="6位行政区域编码">
+                                <span class="input-icon"><i class="fas fa-hashtag"></i></span>
+                            </div>
+                            <div class="validation-message" id="adminCodeValidation"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label for="orgEmail" class="required">政府/企业邮箱</label>
+                            <div class="input-with-icon">
+                                <input type="email" id="orgEmail" name="orgEmail" required placeholder="请输入机构官方邮箱">
+                                <span class="input-icon"><i class="fas fa-envelope"></i></span>
+                            </div>
+                            <div class="validation-message" id="emailValidation"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label for="contactPerson" class="required">负责人姓名</label>
+                            <div class="input-with-icon">
+                                <input type="text" id="contactPerson" name="contactPerson" required
+                                    placeholder="请输入负责人姓名">
+                                <span class="input-icon"><i class="fas fa-user"></i></span>
+                            </div>
+                            <div class="validation-message" id="contactPersonValidation"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="contactPhone" class="required">负责人联系方式</label>
+                    <div class="input-with-icon">
+                        <input type="tel" id="contactPhone" name="contactPhone" required placeholder="请输入负责人手机号码">
+                        <span class="input-icon"><i class="fas fa-phone"></i></span>
+                    </div>
+                    <div class="validation-message" id="phoneValidation"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="orgIntroduction" class="required">政府/企业简介</label>
+                    <textarea id="orgIntroduction" name="orgIntroduction" required
+                        placeholder="请简要介绍机构的基本情况、主要职能或业务范围、规模等（建议200-800字）"></textarea>
+                    <div class="char-counter" id="introCounter">0/800</div>
+                    <div class="validation-message" id="introValidation"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="additionalInfo">补充信息（可选）</label>
+                    <textarea id="additionalInfo" name="additionalInfo" placeholder="可填写其他需要说明的信息，如特殊要求、备注等"></textarea>
+                    <div class="char-counter" id="additionalCounter">0/500</div>
+                </div>
+
+                <button type="submit" class="btn submit-btn">
+                    <i class="fas fa-paper-plane"></i> 提交信息
+                </button>
+            </form>
+        </div>
+
+        <footer>
+            <p><i class="fas fa-shield-alt"></i> 信息安全承诺：我们承诺严格遵守《中华人民共和国网络安全法》及相关法律法规，确保信息安全</p>
+            <p style="margin-top: 8px;">© 2026 政企信息管理系统 | 服务热线：400-xxx-xxxx | 技术支持：support@gov-enterprise.com</p>
+        </footer>
+    </div>
+    <!-- 成功提交弹窗 -->
+    <div class="success-modal" id="successModal">
+        <div class="modal-content">
+            <div style="color: #16a34a; font-size: 3.5rem; margin-bottom: 15px;">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h2 style="color: #1e293b; margin-bottom: 15px;">信息提交成功！</h2>
+            <p style="margin-bottom: 25px; font-size: 16px; line-height: 1.6;">您的政企信息已成功提交至系统，信息编号为：<span
+                    id="infoNumber" style="font-weight: bold;">---</span></p>
+            <p style="margin-bottom: 25px; font-size: 15px; color: #64748b;">我们的工作人员将在3个工作日内进行审核，审核结果将发送至您填写的邮箱。</p>
+            <button id="closeModal" class="btn"
+                style="background-color: rgba(30, 58, 138, 0.9); color: white; padding: 12px 35px; border-radius: 8px; font-size: 16px;">确定</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // 初始化字符计数器
+            const introTextarea = document.getElementById('orgIntroduction');
+            const introCounter = document.getElementById('introCounter');
+            const additionalTextarea = document.getElementById('additionalInfo');
+            const additionalCounter = document.getElementById('additionalCounter');
+
+            introTextarea.addEventListener('input', function () {
+                updateCharCounter(this, introCounter, 800);
+                validateIntroduction(this.value);
+            });
+
+            additionalTextarea.addEventListener('input', function () {
+                updateCharCounter(this, additionalCounter, 500);
+            });
+
+            // 初始化计数器
+            updateCharCounter(introTextarea, introCounter, 800);
+            updateCharCounter(additionalTextarea, additionalCounter, 500);
+
+            // 行政编码验证
+            const adminCodeInput = document.getElementById('adminCode');
+            adminCodeInput.addEventListener('blur', function () {
+                validateAdminCode(this.value);
+            });
+
+            adminCodeInput.addEventListener('input', function () {
+                // 只允许输入数字
+                this.value = this.value.replace(/\D/g, '');
+                // 限制长度为6位
+                if (this.value.length > 6) {
+                    this.value = this.value.slice(0, 6);
+                }
+                validateAdminCode(this.value);
+            });
+
+            // 邮箱验证
+            const emailInput = document.getElementById('orgEmail');
+            emailInput.addEventListener('blur', function () {
+                validateEmail(this.value);
+            });
+
+            // 手机号码验证（优化版本）
+            const phoneInput = document.getElementById('contactPhone');
+            phoneInput.addEventListener('blur', function () {
+                validatePhone(this.value);
+            });
+
+            phoneInput.addEventListener('input', function () {
+                // 实时验证
+                validatePhone(this.value, true);
+            });
+
+            // 机构名称验证
+            const orgNameInput = document.getElementById('orgName');
+            orgNameInput.addEventListener('blur', function () {
+                validateOrgName(this.value);
+            });
+
+            // 负责人姓名验证
+            const contactPersonInput = document.getElementById('contactPerson');
+            contactPersonInput.addEventListener('blur', function () {
+                validateContactPerson(this.value);
+            });
+
+            // 行政地点验证
+            const locationInput = document.getElementById('adminLocation');
+            locationInput.addEventListener('blur', function () {
+                validateLocation(this.value);
+            });
+
+            // 表单提交事件
+            document.getElementById('govEnterpriseForm').addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                // 验证所有字段
+                if (!validateAllFields()) {
+                    return;
+                }
+
+                // 生成信息编号
+                const infoNumber = 'GE' + new Date().getTime().toString().slice(-8);
+                document.getElementById('infoNumber').textContent = infoNumber;
+
+                const orgType = document.getElementsByName('orgType');
+                let orgTypeValue = '';
+                for (let i = 0; i < orgType.length; i++) {
+                    if (orgType[i].checked) {
+                        orgTypeValue = orgType[i].value;
+                        break;
+                    }
+                }
+                // 收集表单数据
+                const formData = {
+                    infoNumber: infoNumber,
+                    orgName: document.getElementById('orgName').value,
+                    adminLocation: document.getElementById('adminLocation').value,
+                    orgType: orgTypeValue,
+                    adminCode: document.getElementById('adminCode').value,
+                    orgEmail: document.getElementById('orgEmail').value,
+                    contactPerson: document.getElementById('contactPerson').value,
+                    contactPhone: document.getElementById('contactPhone').value,
+                    orgIntroduction: document.getElementById('orgIntroduction').value,
+                    additionalInfo: document.getElementById('additionalInfo').value
+                };
+
+                var companybMsg = [];
+                axios
+                    .post("http://127.0.0.1:5000/api/read", {
+                        filename: "Company_Information",
+                    })
+                    .then(function (response) {
+                        companybMsg = response.data.data.Company;
+                        if (
+                            companybMsg.length > 0 &&
+                            companybMsg.find((item) => item.infoNumber === formData.infoNumber)
+                        ) {
+                            alert("政企编号已存在");
+                            return;
+                        } else {
+                            companybMsg.push(formData);
+
+                            const requestMsg = {
+                                filename: "Company_Information",
+                                content: {
+                                    Company: companybMsg,
+                                },
+                            };
+                            axios
+                                .post("http://127.0.0.1:5000/api/write", requestMsg)
+                                .then(function (response) {
+                                    document.getElementById('successModal').classList.add('show');
+                                })
+                                .catch(function (error) {
+                                    console.error("请求失败", error);
+                                });
+                        }
+                    })
+                    .catch(function (error) {
+                        console.error("请求失败", error);
+                    });
+
+                // 在实际应用中，这里会将数据发送到服务器
+                // const formData = new FormData(this);
+                // formData.append('infoNumber', infoNumber);
+            });
+
+            // 关闭弹窗事件
+            document.getElementById('closeModal').addEventListener('click', function () {
+                document.getElementById('successModal').classList.remove('show');
+                // 在实际应用中，这里可能会重定向或重置表单
+                // document.getElementById('govEnterpriseForm').reset();
+                // 重置字符计数器
+                updateCharCounter(introTextarea, introCounter, 800);
+                updateCharCounter(additionalTextarea, additionalCounter, 500);
+            });
+
+            // 验证函数
+            function validateAdminCode(code) {
+                const validationElement = document.getElementById('adminCodeValidation');
+
+                if (!code) {
+                    showValidation(validationElement, '请输入行政编码', 'error');
+                    return false;
+                }
+
+                if (code.length !== 6) {
+                    showValidation(validationElement, '行政编码必须为6位数字', 'error');
+                    return false;
+                }
+
+                // 简单的行政区划代码验证（前2位为省级，中间2位为市级）
+                const provinceCode = parseInt(code.substring(0, 2));
+                if (provinceCode < 11 || provinceCode > 91) {
+                    showValidation(validationElement, '行政编码格式不正确', 'error');
+                    return false;
+                }
+
+                showValidation(validationElement, '行政编码格式正确', 'success');
+                return true;
+            }
+
+            function validateEmail(email) {
+                const validationElement = document.getElementById('emailValidation');
+
+                if (!email) {
+                    showValidation(validationElement, '请输入邮箱地址', 'error');
+                    return false;
+                }
+
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    showValidation(validationElement, '邮箱格式不正确', 'error');
+                    return false;
+                }
+
+                // 验证政府/企业邮箱常见域名
+                const govDomains = ['.gov.cn', '.gov.', '.org.cn', '.org'];
+                const enterpriseDomains = ['.com', '.com.cn', '.cn', '.net', '.co', '.biz'];
+
+                const isGovDomain = govDomains.some(domain => email.toLowerCase().includes(domain));
+                const isEnterpriseDomain = enterpriseDomains.some(domain => email.toLowerCase().includes(domain));
+
+                if (!isGovDomain && !isEnterpriseDomain) {
+                    showValidation(validationElement, '建议使用政府或企业官方邮箱', 'error');
+                    return false;
+                }
+
+                showValidation(validationElement, '邮箱格式正确', 'success');
+                return true;
+            }
+
+            function validatePhone(phone, isRealTime = false) {
+                const validationElement = document.getElementById('phoneValidation');
+
+                if (!phone) {
+                    showValidation(validationElement, '请输入手机号码', 'error');
+                    return false;
+                }
+
+                const phoneRegex = /^1[3-9]\d{9}$/;
+                if (!phoneRegex.test(phone)) {
+                    showValidation(validationElement, '请输入有效的11位手机号码', 'error');
+                    return false;
+                }
+
+                // 如果是实时验证且长度正确，显示成功
+                if (isRealTime && phone.length === 11 && phoneRegex.test(phone)) {
+                    showValidation(validationElement, '手机号码格式正确', 'success');
+                    return true;
+                }
+
+                // 非实时验证时检查是否为中国大陆手机号
+                const chinaMobilePrefix = ['134', '135', '136', '137', '138', '139', '147', '150', '151', '152', '157', '158', '159', '178', '182', '183', '184', '187', '188', '198'];
+                const chinaUnicomPrefix = ['130', '131', '132', '145', '155', '156', '166', '171', '175', '176', '185', '186'];
+                const chinaTelecomPrefix = ['133', '149', '153', '173', '177', '180', '181', '189', '199'];
+
+                const prefix = phone.substring(0, 3);
+                const isValidPrefix = chinaMobilePrefix.includes(prefix) ||
+                    chinaUnicomPrefix.includes(prefix) ||
+                    chinaTelecomPrefix.includes(prefix);
+
+                if (!isValidPrefix) {
+                    showValidation(validationElement, '手机号码运营商识别异常，请检查', 'warning');
+                    return true; // 仍然返回true，因为格式正确
+                }
+
+                showValidation(validationElement, '手机号码验证通过', 'success');
+                return true;
+            }
+
+            function validateOrgName(name) {
+                const validationElement = document.getElementById('orgNameValidation');
+
+                if (!name) {
+                    showValidation(validationElement, '请输入机构名称', 'error');
+                    return false;
+                }
+
+                if (name.length < 2) {
+                    showValidation(validationElement, '机构名称过短', 'error');
+                    return false;
+                }
+
+                // 检查是否包含常见机构后缀
+                const suffixes = ['局', '委员会', '办公室', '部门', '公司', '集团', '有限公司', '有限责任公司', '厂', '院', '所', '中心', '协会', '基金会'];
+                const hasSuffix = suffixes.some(suffix => name.includes(suffix));
+
+                if (!hasSuffix) {
+                    showValidation(validationElement, '建议包含完整的机构名称后缀', 'warning');
+                    return true; // 仍然返回true，因为名称不为空
+                }
+
+                showValidation(validationElement, '机构名称格式正确', 'success');
+                return true;
+            }
+
+            function validateContactPerson(name) {
+                const validationElement = document.getElementById('contactPersonValidation');
+
+                if (!name) {
+                    showValidation(validationElement, '请输入负责人姓名', 'error');
+                    return false;
+                }
+
+                if (name.length < 2) {
+                    showValidation(validationElement, '姓名过短', 'error');
+                    return false;
+                }
+
+                // 简单的中文姓名验证
+                const chineseNameRegex = /^[\u4e00-\u9fa5]{2,10}$/;
+                if (!chineseNameRegex.test(name)) {
+                    showValidation(validationElement, '请输入有效的中文姓名', 'error');
+                    return false;
+                }
+
+                showValidation(validationElement, '姓名格式正确', 'success');
+                return true;
+            }
+
+            function validateLocation(location) {
+                const validationElement = document.getElementById('locationValidation');
+
+                if (!location) {
+                    showValidation(validationElement, '请输入行政地点', 'error');
+                    return false;
+                }
+
+                if (location.length < 5) {
+                    showValidation(validationElement, '地址过短，请填写详细地址', 'error');
+                    return false;
+                }
+
+                // 检查是否包含省/市/区关键字
+                const locationKeywords = ['省', '市', '区', '县', '镇', '乡', '街道', '路', '号'];
+                const hasKeyword = locationKeywords.some(keyword => location.includes(keyword));
+
+                if (!hasKeyword) {
+                    showValidation(validationElement, '建议包含省/市/区等地址信息', 'warning');
+                    return true; // 仍然返回true，因为地址不为空
+                }
+
+                showValidation(validationElement, '地址格式正确', 'success');
+                return true;
+            }
+
+            function validateIntroduction(intro) {
+                const validationElement = document.getElementById('introValidation');
+
+                if (!intro) {
+                    showValidation(validationElement, '请输入机构简介', 'error');
+                    return false;
+                }
+
+                if (intro.length < 50) {
+                    showValidation(validationElement, '简介过短，建议不少于50字', 'error');
+                    return false;
+                }
+
+                if (intro.length > 800) {
+                    showValidation(validationElement, '简介过长，请控制在800字以内', 'error');
+                    return false;
+                }
+
+                // 清除验证消息（如果没有错误）
+                validationElement.classList.remove('show');
+                return true;
+            }
+
+            function validateAllFields() {
+                const orgName = document.getElementById('orgName').value.trim();
+                const location = document.getElementById('adminLocation').value.trim();
+                const adminCode = document.getElementById('adminCode').value.trim();
+                const email = document.getElementById('orgEmail').value.trim();
+                const contactPerson = document.getElementById('contactPerson').value.trim();
+                const phone = document.getElementById('contactPhone').value.trim();
+                const intro = document.getElementById('orgIntroduction').value.trim();
+
+                // 逐一验证每个字段
+                const validations = [
+                    validateOrgName(orgName),
+                    validateLocation(location),
+                    validateAdminCode(adminCode),
+                    validateEmail(email),
+                    validateContactPerson(contactPerson),
+                    validatePhone(phone),
+                    validateIntroduction(intro)
+                ];
+
+                // 检查是否有验证失败的字段
+                const isValid = validations.every(validation => validation === true);
+
+                if (!isValid) {
+                    // 滚动到第一个错误的字段
+                    const firstError = document.querySelector('.validation-message.error.show');
+                    if (firstError) {
+                        firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                    return false;
+                }
+
+                return true;
+            }
+
+            // 辅助函数
+            function showValidation(element, message, type) {
+                element.textContent = message;
+                element.className = `validation-message ${type} show`;
+                element.innerHTML = `<span class="validation-icon"><i class="fas fa-${type === 'error' ? 'exclamation-circle' : type === 'warning' ? 'exclamation-triangle' : 'check-circle'}"></i></span>${message}`;
+            }
+
+            function updateCharCounter(textarea, counterElement, maxLength) {
+                const length = textarea.value.length;
+                counterElement.textContent = `${length}/${maxLength}`;
+
+                // 根据长度调整颜色
+                if (length > maxLength) {
+                    counterElement.style.color = '#dc2626';
+                } else if (length > maxLength * 0.9) {
+                    counterElement.style.color = '#f97316';
+                } else {
+                    counterElement.style.color = '#64748b';
+                }
+            }
+
+            // 设置表单示例数据（仅用于演示）
+
+
+            function setSampleData() {
+                // 在实际应用中不应设置示例数据，这里仅用于演示
+                document.getElementById('orgName').value = '市发展和改革委员会';
+                document.getElementById('adminLocation').value = 'XX省XX市XX区人民路123号';
+                document.getElementById('adminCode').value = '430100';
+                document.getElementById('orgEmail').value = 'office@fgw.gov.cn';
+                document.getElementById('contactPerson').value = '王主任';
+                document.getElementById('contactPhone').value = '13800138000';
+                document.getElementById('orgIntroduction').value = '市发展和改革委员会是市人民政府组成部门，主要负责拟订并组织实施全市国民经济和社会发展战略、中长期规划和年度计划；统筹协调经济社会发展，研究分析经济形势，提出总量平衡、发展速度和结构调整的目标政策；承担指导推进和综合协调经济体制改革的责任；承担规划重大建设项目和生产力布局的责任；推进经济结构战略性调整；负责社会发展与国民经济发展的政策衔接；推进可持续发展战略；组织编制主体功能区规划并协调实施和监测评估；承担重要商品总量平衡和宏观调控的责任；负责社会发展与国民经济发展的政策衔接；组织拟订社会发展战略、总体规划和年度计划；推进可持续发展战略。';
+                document.getElementById('additionalInfo').value = '希望与高校合作开展经济社会发展研究项目。';
+
+                // 触发验证和计数器更新
+                introTextarea.dispatchEvent(new Event('input'));
+                additionalTextarea.dispatchEvent(new Event('input'));
+                validateAllFields();
+            }
+        });
+    </script>
+</body>
+
+</html>
+```
