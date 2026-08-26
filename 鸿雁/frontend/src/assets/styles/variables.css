@@ -1,0 +1,47 @@
+:root {
+  /* 主题色 */
+  --color-primary: #dc3545;
+  --color-primary-dark: #c8102e;
+  --color-primary-darker: #9c0c13;
+  --color-primary-light: rgba(255, 40, 40, 0.52);
+
+  /* 辅助色 */
+  --color-accent: #4a90e2;
+  --color-accent-dark: #2c3e50;
+  --color-accent-light: #e8f4fc;
+  --color-link: #1a5fb4;
+
+  /* 中性色 */
+  --color-bg: #f9f9f9;
+  --color-bg-alt: #f0f2f5;
+  --color-bg-card: #ffffff;
+  --color-border: #ecf0f1;
+  --color-text: #333333;
+  --color-text-light: #555555;
+  --color-text-muted: #999999;
+
+  /* 字体 */
+  --font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+
+  /* 间距 */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 40px;
+
+  /* 圆角 */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 15px;
+  --radius-pill: 25px;
+
+  /* 阴影 */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 15px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 6px 20px rgba(0, 0, 0, 0.12);
+
+  /* 布局 */
+  --header-height: 90px;
+  --max-width: 1400px;
+}
