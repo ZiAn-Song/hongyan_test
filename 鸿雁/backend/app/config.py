@@ -20,7 +20,7 @@ class Settings(BaseSettings):
     EMBEDDING_BASE_URL: str = "https://ark.cn-beijing.volces.com/api/v3"
     EMBEDDING_MODEL: str = "doubao-embedding-vision-251215"
 
-    CORS_ORIGINS: list[str] = ["http://localhost:5173"]
+    CORS_ORIGINS: list[str] = ["http://localhost:5173", "https://hongyan-3kr.pages.dev"]
 
     model_config = {"env_file": ".env", "env_file_encoding": "utf-8"}
 

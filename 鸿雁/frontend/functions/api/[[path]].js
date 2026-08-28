@@ -5,7 +5,7 @@ export async function onRequest(context) {
   const targetUrl = backendUrl + '/api' + url.pathname.replace(/^\/api/, '') + url.search;
 
   const headers = new Headers(request.headers);
-  headers.set('Host', new URL(backendUrl).host);
+  headers.delete('Host');
 
   const fetchOptions = {
     method: request.method,

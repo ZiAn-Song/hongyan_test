@@ -1,2 +1,27 @@
 # Include your project-specific ignores in this file
 # Read about how to use .gitignore: https://help.github.com/articles/ignoring-files
+
+# Temporary/backup directories
+hongyan_new/
+functions_backup/
+*.zip
+
+# IDE
+.idea/
+
+# Node
+node_modules/
+dist/
+
+# Python
+__pycache__/
+*.pyc
+*.db
+.venv/
+venv/
+
+# Vercel
+.vercel/
+
+# Environment
+.env
