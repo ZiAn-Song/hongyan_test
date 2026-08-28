@@ -93,12 +93,12 @@ class BaseCrawler:
         self.session = requests.Session()
         self.session.headers.update(HEADERS)
 
-    def fetch(self, url: str, retries: int = 2) -> str | None:
+    def fetch(self, url: str, retries: int = 1) -> str | None:
         for attempt in range(retries):
             try:
-                resp = self.session.get(url, timeout=15, verify=False)
+                resp = self.session.get(url, timeout=10, verify=False)
                 resp.encoding = resp.apparent_encoding or "utf-8"
-                time.sleep(random.uniform(1.0, 2.0))
+                time.sleep(random.uniform(0.3, 0.6))
                 if resp.status_code == 200:
                     return resp.text
                 logger.warning(f"HTTP {resp.status_code}: {url}")
@@ -187,7 +187,7 @@ class BaseCrawler:
             logger.info(f"[{self.source_name}] 解析到 {len(articles)} 条候选链接")
 
             seen_urls = set()
-            for item in articles[:30]:
+            for item in articles[:10]:
                 detail_url = item.get("url", "")
                 if not detail_url or detail_url in seen_urls:
                     continue
@@ -844,13 +844,17 @@ CRAWLER_MAP = {
 }
 
 
-def run_crawler(db: Session, source: str | None = None) -> tuple[int, list[str]]:
-    """运行爬虫。source 为 None 时运行全部信源。"""
+def run_crawler(db: Session, source: str | None = None, max_seconds: int = 80) -> tuple[int, list[str]]:
+    """运行爬虫。source 为 None 时运行全部信源。max_seconds 限制总执行时间。"""
     total_crawled = 0
     all_errors = []
+    start_time = time.time()
 
     sources = [source] if source else list(CRAWLER_MAP.keys())
     for src_key in sources:
+        if time.time() - start_time > max_seconds:
+            all_errors.append(f"已达时间上限({max_seconds}s)，跳过剩余信源")
+            break
         crawler_cls = CRAWLER_MAP.get(src_key)
         if not crawler_cls:
             all_errors.append(f"未知信源: {src_key}")
