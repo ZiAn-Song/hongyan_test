@@ -340,7 +340,7 @@ onUnmounted(() => {
 }
 
 .hero-card h1 {
-  color: #c8102e;
+  color: #16305c;
   margin: 0 0 8px;
   font-size: 28px;
 }
@@ -371,7 +371,7 @@ onUnmounted(() => {
 }
 
 .btn:hover { opacity: 0.85; }
-.btn.primary { background: #c8102e; color: white; }
+.btn.primary { background: #16305c; color: white; }
 .btn.secondary { background: white; border: 1px solid #e6e6e6; color: #333; }
 
 .board-wrapper { margin-top: 18px; }
@@ -392,7 +392,7 @@ onUnmounted(() => {
   flex-direction: column;
 }
 
-.stat .num { font-size: 20px; color: #c8102e; font-weight: 800; }
+.stat .num { font-size: 20px; color: #16305c; font-weight: 800; }
 .stat .label { color: #6b6b6b; font-size: 13px; }
 
 .hero-right { display: flex; flex-direction: column; gap: 12px; }
@@ -419,9 +419,9 @@ onUnmounted(() => {
   text-align: center;
 }
 
-.slide.one { background: linear-gradient(135deg, #c8102e, #ff6b6b); }
-.slide.two { background: linear-gradient(135deg, #1d71b8, #1166a3); }
-.slide.three { background: linear-gradient(135deg, #2c9c6b, #1a8a5b); }
+.slide.one { background: linear-gradient(135deg, #16305c, var(--color-accent)); }
+.slide.two { background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark)); }
+.slide.three { background: linear-gradient(135deg, var(--el-color-success), #2f6b4f); }
 
 .dots {
   position: absolute;
@@ -499,7 +499,7 @@ section { margin-top: 28px; }
   position: relative;
   width: 100%;
   height: 320px;
-  background: #f0f4f8;
+  background: var(--paper-2);
   border-radius: 8px;
   display: flex;
   align-items: center;
@@ -532,7 +532,7 @@ section { margin-top: 28px; }
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background: #c8102e;
+  background: #16305c;
   cursor: pointer;
   box-shadow: 0 0 8px rgba(200, 16, 46, 0.6);
   transition: transform 0.2s;
@@ -770,7 +770,7 @@ section { margin-top: 28px; }
 
 .outcome-title { font-weight: 700; font-size: 15px; }
 .outcome-meta { color: #6b6b6b; font-size: 13px; margin-top: 6px; margin-bottom: 10px; }
-.outcome-link { color: #c8102e; text-decoration: none; font-size: 14px; font-weight: 600; }
+.outcome-link { color: #16305c; text-decoration: none; font-size: 14px; font-weight: 600; }
 .outcome-link:hover { text-decoration: underline; }
 
 /* 页脚 */

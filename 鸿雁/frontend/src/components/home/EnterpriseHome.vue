@@ -100,7 +100,7 @@ onMounted(loadDemands)
 
 .publish-btn {
   padding: 10px 24px;
-  background: linear-gradient(135deg, #1a5276, #2980b9);
+  background: linear-gradient(135deg, var(--color-primary-dark), var(--color-primary));
   color: white;
   border: none;
   border-radius: 25px;
@@ -134,7 +134,7 @@ table {
 }
 
 thead tr {
-  background: linear-gradient(135deg, #1a5276, #2980b9);
+  background: linear-gradient(135deg, var(--color-primary-dark), var(--color-primary));
 }
 
 th {
@@ -158,7 +158,7 @@ tbody tr {
 }
 
 tbody tr:hover {
-  background: #f8f9fa;
+  background: var(--paper-2);
 }
 
 tbody tr:last-child td {
@@ -172,8 +172,8 @@ tbody tr:last-child td {
   font-weight: 600;
 }
 
-.status-open { background: #e8f5e9; color: #2e7d32; }
-.status-closed { background: #ffebee; color: #c62828; }
+.status-open { background: rgba(47,107,79,.08); color: #2f6b4f; }
+.status-closed { background: var(--color-accent-light); color: var(--color-accent); }
 
 .loading-box, .empty-box {
   text-align: center;

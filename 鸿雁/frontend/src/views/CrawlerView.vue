@@ -428,7 +428,7 @@ async function handleClearAll() {
 }
 
 .page-banner {
-  background: linear-gradient(135deg, #2c3e50 0%, #3498db 50%, #2c3e50 100%);
+  background: linear-gradient(135deg, var(--ink) 0%, var(--color-primary) 50%, var(--ink) 100%);
   color: white;
   padding: 50px 5% 35px;
   text-align: center;
@@ -491,7 +491,7 @@ async function handleClearAll() {
 }
 
 .search-input:focus {
-  border-color: #3498db;
+  border-color: var(--color-primary);
   outline: none;
 }
 
@@ -507,7 +507,7 @@ async function handleClearAll() {
 
 .filter-select:focus,
 .date-input:focus {
-  border-color: #3498db;
+  border-color: var(--color-primary);
   outline: none;
 }
 
@@ -518,7 +518,7 @@ async function handleClearAll() {
 
 .trigger-btn {
   padding: 11px 20px;
-  background: linear-gradient(135deg, #3498db, #2980b9);
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary));
   color: white;
   border: none;
   border-radius: 10px;
@@ -541,7 +541,7 @@ async function handleClearAll() {
 
 .clear-btn {
   padding: 11px 20px;
-  background: linear-gradient(135deg, #e74c3c, #c0392b);
+  background: linear-gradient(135deg, var(--color-accent), var(--color-accent));
   color: white;
   border: none;
   border-radius: 10px;
@@ -564,7 +564,7 @@ async function handleClearAll() {
 
 .today-section {
   margin-bottom: 30px;
-  background: linear-gradient(135deg, #eef6ff, #f0f7ff);
+  background: linear-gradient(135deg, #eef6ff, var(--color-primary-light));
   border-radius: 14px;
   padding: 20px;
   border: 1px solid #d0e3f7;
@@ -583,7 +583,7 @@ async function handleClearAll() {
   gap: 8px;
   font-size: 1.2rem;
   font-weight: 700;
-  color: #1a5276;
+  color: var(--color-primary-dark);
 }
 
 .today-title i {
@@ -599,7 +599,7 @@ async function handleClearAll() {
 
 .today-count {
   font-size: 0.85rem;
-  color: #2980b9;
+  color: var(--color-primary);
   background: white;
   padding: 4px 12px;
   border-radius: 12px;
@@ -619,7 +619,7 @@ async function handleClearAll() {
 }
 
 .today-scroll::-webkit-scrollbar-track {
-  background: #e8eef5;
+  background: var(--paper-2);
   border-radius: 3px;
 }
 
@@ -635,7 +635,7 @@ async function handleClearAll() {
   padding: 16px;
   cursor: pointer;
   transition: transform 0.25s, box-shadow 0.25s;
-  border: 1px solid #e8eef5;
+  border: 1px solid var(--paper-2);
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -683,7 +683,7 @@ async function handleClearAll() {
 
 .spinner {
   border: 4px solid #f3f3f3;
-  border-top: 4px solid #3498db;
+  border-top: 4px solid var(--color-primary);
   border-radius: 50%;
   width: 50px;
   height: 50px;
@@ -731,19 +731,19 @@ async function handleClearAll() {
   align-items: center;
   gap: 8px;
   padding: 8px 16px;
-  background: linear-gradient(135deg, #f0f4f8, #e8eef5);
-  border-left: 4px solid #3498db;
+  background: linear-gradient(135deg, var(--paper-2), var(--paper-2));
+  border-left: 4px solid var(--color-primary);
   border-radius: 6px;
   font-size: 0.95rem;
   font-weight: 700;
-  color: #2c3e50;
+  color: var(--ink);
   position: sticky;
   top: 0;
   z-index: 10;
 }
 
 .date-group-header i {
-  color: #3498db;
+  color: var(--color-primary);
 }
 
 .date-group-label {
@@ -781,7 +781,7 @@ async function handleClearAll() {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  background: linear-gradient(135deg, var(--paper-2), #e9ecef);
   flex-shrink: 0;
 }
 
@@ -798,18 +798,18 @@ async function handleClearAll() {
 }
 
 .badge-mca {
-  background: #e8f5e9;
-  color: #2e7d32;
+  background: rgba(47,107,79,.08);
+  color: #2f6b4f;
 }
 
 .badge-xinhua {
-  background: #ffebee;
-  color: #c62828;
+  background: var(--color-accent-light);
+  color: var(--color-accent);
 }
 
 .badge-xinjiang {
-  background: #e3f2fd;
-  color: #1565c0;
+  background: var(--color-primary-light);
+  color: var(--color-primary);
 }
 
 .badge-neac {
@@ -892,7 +892,7 @@ async function handleClearAll() {
 }
 
 .article-card:hover .card-right {
-  color: #3498db;
+  color: var(--color-primary);
 }
 
 .card-delete-btn {
@@ -911,7 +911,7 @@ async function handleClearAll() {
 }
 
 .card-delete-btn:hover {
-  background: #e74c3c;
+  background: var(--color-accent);
   color: white;
 }
 
@@ -934,8 +934,8 @@ async function handleClearAll() {
 }
 
 .page-btn:hover:not(:disabled) {
-  border-color: #3498db;
-  color: #3498db;
+  border-color: var(--color-primary);
+  color: var(--color-primary);
 }
 
 .page-btn:disabled {
@@ -989,7 +989,7 @@ async function handleClearAll() {
 }
 
 .modal-close:hover {
-  background: #e74c3c;
+  background: var(--color-accent);
   color: white;
 }
 
@@ -1055,7 +1055,7 @@ async function handleClearAll() {
 }
 
 .source-link {
-  color: #3498db;
+  color: var(--color-primary);
   font-size: 0.9rem;
   text-decoration: none;
   display: inline-flex;
@@ -1065,7 +1065,7 @@ async function handleClearAll() {
 }
 
 .source-link:hover {
-  color: #2980b9;
+  color: var(--color-primary);
 }
 
 /* Transitions */

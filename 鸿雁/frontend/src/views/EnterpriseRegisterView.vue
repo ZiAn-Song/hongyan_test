@@ -360,7 +360,7 @@ const closeSuccessModal = () => {
 }
 
 .success-icon {
-  color: #16a34a;
+  color: var(--el-color-success);
   font-size: 3.5rem;
   margin-bottom: 15px;
 }

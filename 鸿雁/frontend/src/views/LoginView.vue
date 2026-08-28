@@ -298,7 +298,7 @@ const handleQuickLogin = async (type) => {
 }
 
 .student-btn {
-  background: linear-gradient(135deg, #4caf50, #2e7d32);
+  background: linear-gradient(135deg, var(--el-color-success), #2f6b4f);
 }
 
 .student-btn:hover:not(:disabled) {
@@ -314,7 +314,7 @@ const handleQuickLogin = async (type) => {
 }
 
 .admin-btn {
-  background: linear-gradient(135deg, #2c3e50, #34495e);
+  background: linear-gradient(135deg, var(--ink), var(--ink));
 }
 
 .admin-btn:hover:not(:disabled) {

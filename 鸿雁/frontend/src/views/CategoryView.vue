@@ -136,7 +136,7 @@ const categoryMap = {
     description: '浏览基础建设相关机构发布的实践需求，参与边疆基础设施建设',
     icon: 'fas fa-hard-hat',
     iconEnd: '',
-    color: '#e67e22',
+    color: 'var(--el-color-warning)',
     lightColor: '#fef3e6',
     filter: '基础建设'
   },
@@ -146,7 +146,7 @@ const categoryMap = {
     description: '浏览教育机构发布的实践需求，助力边疆教育发展',
     icon: 'fas fa-graduation-cap',
     iconEnd: '',
-    color: '#2980b9',
+    color: 'var(--color-primary)',
     lightColor: '#ebf5fb',
     filter: '教育民生'
   },
@@ -176,7 +176,7 @@ const categoryMap = {
     description: '浏览环保相关实践需求，参与生态环境保护与可持续发展',
     icon: 'fas fa-leaf',
     iconEnd: '',
-    color: '#27ae60',
+    color: 'var(--el-color-success)',
     lightColor: '#e9f7ef',
     filter: '环境'
   }
@@ -347,7 +347,7 @@ onMounted(() => {
   align-items: center;
   margin-bottom: 15px;
   padding-bottom: 15px;
-  border-bottom: 1px solid #eaeaea;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .location {
@@ -462,7 +462,7 @@ onMounted(() => {
   text-align: center;
   padding: 40px;
   color: #e63946;
-  background-color: #ffe6e6;
+  background-color: var(--color-primary-light);
   border-radius: 10px;
   margin: 20px 0;
 }

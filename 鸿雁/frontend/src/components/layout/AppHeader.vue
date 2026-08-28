@@ -1,33 +1,37 @@
 <template>
   <div class="header-container">
+    <!-- 报头 masthead：双细线文书风 -->
     <header>
-      <div class="header-left">
-        <div class="logo">
-          <img src="/img/logo.jpg" alt="鸿雁平台logo" />
+      <div class="masthead-top">
+        <div class="header-left">
+          <div class="logo">
+            <img src="/img/logo.jpg" alt="鸿雁平台logo" />
+          </div>
+          <div class="site-title">
+            <h1>鸿雁<span class="title-divider">·</span>东西部协作智能资源对接平台</h1>
+            <p>连接地方需求 · 赋能边疆发展</p>
+          </div>
         </div>
-        <div class="site-title">
-          <h1>鸿雁 | 产学研融合助力边疆发展领航者</h1>
-          <p>连接地方需求，赋能边疆发展</p>
-        </div>
-      </div>
 
-      <div class="nav-right">
-        <nav>
-          <ul>
-            <li v-for="item in navItems" :key="item.path">
-              <router-link :to="item.path">{{ item.label }}</router-link>
-            </li>
-            <li v-if="!authStore.isLoggedIn" class="auth-item">
-              <router-link to="/login">登录</router-link>
-            </li>
-            <li v-if="authStore.isLoggedIn" class="user-item">
-              <span class="user-name"><i class="fas fa-user-circle"></i> {{ authStore.userName }}</span>
-              <span class="role-badge" :class="roleBadgeClass">{{ roleLabel }}</span>
-              <button class="logout-btn" @click="handleLogout">退出</button>
-            </li>
-          </ul>
-        </nav>
+        <div class="nav-right">
+          <nav>
+            <ul>
+              <li v-for="item in navItems" :key="item.path">
+                <router-link :to="item.path" :class="{ active: route.path === item.path }">{{ item.label }}</router-link>
+              </li>
+              <li v-if="!authStore.isLoggedIn" class="auth-item">
+                <router-link to="/login" class="login-link">登录</router-link>
+              </li>
+              <li v-if="authStore.isLoggedIn" class="user-item">
+                <span class="user-name">{{ authStore.userName }}</span>
+                <span class="role-badge" :class="roleBadgeClass">{{ roleLabel }}</span>
+                <button class="logout-btn" @click="handleLogout">退出</button>
+              </li>
+            </ul>
+          </nav>
+        </div>
       </div>
+      <div class="masthead-rule"></div>
     </header>
   </div>
 </template>
@@ -114,17 +118,24 @@ const handleLogout = () => {
 .header-container {
   position: relative;
   width: 100%;
+  background: var(--paper);
 }
 
 header {
+  padding: 0 4%;
+  position: relative;
+  z-index: 10;
+}
+
+.masthead-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 15px 5%;
-  background-color: var(--color-primary-light);
-  box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
-  position: relative;
-  z-index: 10;
+  padding: 16px 0 14px;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .header-left {
@@ -133,230 +144,102 @@ header {
 }
 
 .logo {
-  width: 60px;
-  height: 60px;
-  border-radius: 12px;
+  width: 52px;
+  height: 52px;
+  border-radius: 3px;
   overflow: hidden;
-  margin-right: 15px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  margin-right: 14px;
+  border: 1px solid var(--rule);
+  flex-shrink: 0;
 }
-
-.logo img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 12px;
-}
+.logo img { width: 100%; height: 100%; object-fit: cover; }
 
 .site-title h1 {
-  font-size: 24px;
-  color: white;
+  font-family: var(--font-serif);
+  font-size: 21px;
   font-weight: 700;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  letter-spacing: 2px;
+  color: var(--ink);
+  line-height: 1.4;
 }
-
+.title-divider { color: var(--color-accent); margin: 0 6px; font-weight: 400; }
 .site-title p {
-  font-size: 14px;
-  color: rgba(255, 255, 255, 0.9);
-  margin-top: 3px;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  font-size: 11px;
+  letter-spacing: 3.5px;
+  color: var(--ink-3);
+  margin-top: 2px;
 }
 
-.nav-right {
+.nav-right nav ul {
   display: flex;
   align-items: center;
-  width: 60%;
+  gap: 2px;
+  flex-wrap: wrap;
 }
-
-nav {
-  width: 100%;
-}
-
-nav ul {
-  display: flex;
-  width: 100%;
-  justify-content: space-between;
-  gap: 5px;
-  align-items: center;
-}
-
-nav li {
-  padding: 16px 22px;
-  color: white;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s;
-  position: relative;
-  border-radius: 8px;
-  font-size: 18px;
-  text-align: center;
-  flex: 1;
-  min-width: 0;
-  white-space: nowrap;
-  background-color: rgba(255, 255, 255, 0.15);
-}
-
-nav li a {
-  color: inherit;
-  text-decoration: none;
+nav a {
   display: block;
-  width: 100%;
-  height: 100%;
+  padding: 7px 13px;
+  font-size: 13.5px;
+  color: var(--ink-2);
+  letter-spacing: 1px;
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s, border-color 0.2s;
 }
-
-nav li:hover {
-  background-color: rgba(255, 255, 255, 0.3);
-  color: white;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(255, 255, 255, 0.2);
-}
-
-nav li.router-link-active {
-  background-color: white;
+nav a:hover { color: var(--color-primary); }
+nav a.active {
   color: var(--color-primary);
-  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.4);
+  font-weight: 650;
+  border-bottom-color: var(--color-primary);
 }
 
-nav li::after {
-  content: '';
-  position: absolute;
-  bottom: 8px;
-  left: 50%;
-  width: 0;
-  height: 3px;
-  background-color: white;
-  transition: all 0.3s;
-  transform: translateX(-50%);
-}
-
-nav li:hover::after {
-  width: 70%;
-}
-
-nav li.router-link-active::after {
-  width: 70%;
-  background-color: var(--color-primary);
-}
-
-.auth-item {
-  background-color: rgba(255, 255, 255, 0.25) !important;
-  border: 2px solid rgba(255, 255, 255, 0.4);
-}
-
-.user-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background-color: transparent !important;
-  padding: 8px 12px !important;
-  flex: 0 0 auto !important;
-}
-
-.user-name {
-  color: white;
-  font-size: 16px;
-  white-space: nowrap;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.logout-btn {
-  padding: 6px 16px;
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  border-radius: 6px;
-  color: white;
-  cursor: pointer;
-  font-size: 14px;
+.auth-item .login-link {
+  border: 1px solid var(--color-primary);
+  color: var(--color-primary);
+  border-radius: var(--radius-sm);
+  padding: 6px 18px;
+  margin-left: 8px;
   font-weight: 600;
-  transition: all 0.3s;
-  white-space: nowrap;
 }
+.auth-item .login-link:hover { background: var(--color-primary); color: #fff; }
 
-.logout-btn:hover {
-  background: rgba(255, 255, 255, 0.35);
-}
+.user-item { display: flex; align-items: center; gap: 8px; }
+.user-name { font-size: 13px; color: var(--ink); font-weight: 600; }
 
 .role-badge {
-  padding: 3px 10px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 600;
-  white-space: nowrap;
+  font-size: 10.5px;
+  padding: 1px 8px;
+  border: 1px solid;
+  border-radius: 2px;
+  letter-spacing: 1.5px;
+}
+.badge-admin { color: var(--color-accent); border-color: rgba(163, 58, 42, 0.4); background: var(--color-accent-light); }
+.badge-enterprise { color: var(--color-primary); border-color: rgba(30, 58, 110, 0.35); background: var(--color-primary-light); }
+.badge-student { color: var(--ink-2); border-color: var(--rule); background: var(--paper-2); }
+
+.logout-btn {
+  border: none;
+  background: none;
+  font-size: 12.5px;
+  color: var(--ink-3);
+  cursor: pointer;
+  letter-spacing: 1px;
+  padding: 4px 2px;
+}
+.logout-btn:hover { color: var(--color-accent); }
+
+/* 报头双细线：粗 + 细，文书气质 */
+.masthead-rule {
+  border-top: 3px double var(--ink);
+  position: relative;
+}
+.masthead-rule::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; top: 3px;
+  border-top: 1px solid var(--rule);
 }
 
-.badge-admin {
-  background: linear-gradient(135deg, #6a1b9a, #8e24aa);
-  color: white;
-}
-
-.badge-enterprise {
-  background: linear-gradient(135deg, #e65100, #f57c00);
-  color: white;
-}
-
-.badge-student {
-  background: linear-gradient(135deg, #1565c0, #1976d2);
-  color: white;
-}
-
-@media (max-width: 1024px) {
-  header {
-    flex-direction: column;
-    padding: 15px 20px;
-  }
-
-  .header-left {
-    width: 100%;
-    justify-content: space-between;
-    margin-bottom: 15px;
-  }
-
-  .nav-right {
-    width: 100%;
-    justify-content: center;
-  }
-
-  nav ul {
-    width: 100%;
-    justify-content: space-between;
-    flex-wrap: wrap;
-  }
-
-  nav li {
-    padding: 12px 15px;
-    font-size: 15px;
-    flex: 0 0 auto;
-  }
-}
-
-@media (max-width: 480px) {
-  .header-left {
-    flex-direction: column;
-    text-align: center;
-  }
-
-  .logo {
-    margin-right: 0;
-    margin-bottom: 10px;
-  }
-
-  nav ul {
-    gap: 3px;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-
-  nav li {
-    padding: 8px 10px;
-    font-size: 13px;
-    flex: 0 0 auto;
-  }
-
-  .user-item {
-    flex-direction: column;
-    gap: 6px;
-  }
+@media (max-width: 960px) {
+  .masthead-top { flex-direction: column; align-items: flex-start; }
 }
 </style>

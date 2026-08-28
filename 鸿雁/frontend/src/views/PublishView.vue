@@ -432,12 +432,12 @@ const handleSearch = () => {
 
 /* ---------- 需求分类 ---------- */
 const categories = [
-  { name: '医疗健康', icon: 'fas fa-heartbeat', bg: 'linear-gradient(135deg, #f0f7ff, #e6f0ff)', color: '#1d71b8' },
-  { name: '基础建设', icon: 'fas fa-hard-hat', bg: 'linear-gradient(135deg, #f0fff4, #e6ffec)', color: '#2c9c6b' },
-  { name: '教育民生', icon: 'fas fa-book-reader', bg: 'linear-gradient(135deg, #fff8f0, #fff0e6)', color: '#e67e22' },
-  { name: '基层治理', icon: 'fas fa-landmark', bg: 'linear-gradient(135deg, #f8f0ff, #f0e6ff)', color: '#9b59b6' },
-  { name: '文旅', icon: 'fas fa-plane-departure', bg: 'linear-gradient(135deg, #fff0f5, #ffe6ee)', color: '#c8102e' },
-  { name: '环境', icon: 'fas fa-leaf', bg: 'linear-gradient(135deg, #f0fff8, #e6fff0)', color: '#1a8a5b' }
+  { name: '医疗健康', icon: 'fas fa-heartbeat', bg: 'linear-gradient(135deg, var(--color-primary-light), var(--color-primary-light))', color: 'var(--color-primary)' },
+  { name: '基础建设', icon: 'fas fa-hard-hat', bg: 'linear-gradient(135deg, #f0fff4, rgba(47,107,79,.08))', color: 'var(--el-color-success)' },
+  { name: '教育民生', icon: 'fas fa-book-reader', bg: 'linear-gradient(135deg, #fff8f0, #fff0e6)', color: 'var(--el-color-warning)' },
+  { name: '基层治理', icon: 'fas fa-landmark', bg: 'linear-gradient(135deg, var(--talent-bg), var(--talent-bg))', color: 'var(--talent)' },
+  { name: '文旅', icon: 'fas fa-plane-departure', bg: 'linear-gradient(135deg, #fff0f5, var(--color-accent-light))', color: '#16305c' },
+  { name: '环境', icon: 'fas fa-leaf', bg: 'linear-gradient(135deg, #f0fff8, #e6fff0)', color: '#2f6b4f' }
 ]
 
 /* ---------- 团队中心 ---------- */
@@ -753,15 +753,15 @@ onUnmounted(() => {
 }
 
 .slide.one {
-  background: linear-gradient(135deg, var(--color-primary-dark), #ff6b6b);
+  background: linear-gradient(135deg, var(--color-primary-dark), var(--color-accent));
 }
 
 .slide.two {
-  background: linear-gradient(135deg, var(--color-accent), #1166a3);
+  background: linear-gradient(135deg, var(--color-accent), var(--color-primary-dark));
 }
 
 .slide.three {
-  background: linear-gradient(135deg, #2c9c6b, #1a8a5b);
+  background: linear-gradient(135deg, var(--el-color-success), #2f6b4f);
 }
 
 .dots {

@@ -259,7 +259,7 @@ onMounted(async () => {
 /* 主内容区域 */
 .main-content {
   background-color: var(--color-bg-card);
-  border: 2px solid #d0d7e0;
+  border: 2px solid var(--color-border);
   border-radius: var(--radius-sm);
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
   padding: 28px 30px;
@@ -286,7 +286,7 @@ onMounted(async () => {
   align-items: center;
   margin-bottom: 25px;
   padding-bottom: 25px;
-  border-bottom: 2px solid #eaeaea;
+  border-bottom: 2px solid var(--color-border);
   gap: 20px;
 }
 
@@ -301,7 +301,7 @@ onMounted(async () => {
   color: #888;
   font-size: 38px;
   flex-shrink: 0;
-  border: 1px solid #c5d9f0;
+  border: 1px solid rgba(30,58,110,.18);
 }
 
 .author-details {
@@ -341,7 +341,7 @@ onMounted(async () => {
   color: var(--color-link);
   margin-bottom: 20px;
   padding-bottom: 15px;
-  border-bottom: 2px solid #eaeaea;
+  border-bottom: 2px solid var(--color-border);
   line-height: 1.4;
 }
 
@@ -357,7 +357,7 @@ onMounted(async () => {
   padding: 14px 16px;
   border-radius: var(--radius-sm);
   background-color: #fafbfc;
-  border-left: 4px solid #c5d9f0;
+  border-left: 4px solid rgba(30,58,110,.18);
   color: var(--color-text);
 }
 
@@ -372,14 +372,14 @@ onMounted(async () => {
   gap: 15px;
   margin-top: 25px;
   padding-top: 20px;
-  border-top: 1px solid #eaeaea;
+  border-top: 1px solid var(--color-border);
 }
 
 .topic-image {
   flex: 1;
   min-width: 200px;
   height: 130px;
-  background-color: #f0f7ff;
+  background-color: var(--color-primary-light);
   border-radius: var(--radius-sm);
   display: flex;
   flex-direction: column;
@@ -387,7 +387,7 @@ onMounted(async () => {
   justify-content: center;
   color: var(--color-link);
   font-size: 13px;
-  border: 2px dashed #c5d9f0;
+  border: 2px dashed rgba(30,58,110,.18);
 }
 
 .topic-image i {
@@ -399,7 +399,7 @@ onMounted(async () => {
 .tags-stats-container {
   margin-top: 28px;
   padding: 20px;
-  background-color: #f8f9fa;
+  background-color: var(--paper-2);
   border-radius: var(--radius-md);
 }
 
@@ -414,7 +414,7 @@ onMounted(async () => {
   color: var(--color-link);
   margin-bottom: 14px;
   padding-bottom: 10px;
-  border-bottom: 1px solid #eaeaea;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .tags-list {
@@ -425,12 +425,12 @@ onMounted(async () => {
 
 .tag {
   padding: 7px 16px;
-  background-color: #e8f2ff;
+  background-color: var(--color-primary-light);
   color: var(--color-link);
   border-radius: var(--radius-sm);
   font-size: 14px;
   font-weight: 500;
-  border: 1px solid #c5d9f0;
+  border: 1px solid rgba(30,58,110,.18);
 }
 
 /* 统计区域 */
@@ -474,7 +474,7 @@ onMounted(async () => {
 .comments-section {
   margin-top: 35px;
   padding-top: 25px;
-  border-top: 2px solid #eaeaea;
+  border-top: 2px solid var(--color-border);
 }
 
 .comments-title {
@@ -483,7 +483,7 @@ onMounted(async () => {
   color: var(--color-link);
   margin-bottom: 20px;
   padding-bottom: 10px;
-  border-bottom: 1px solid #eaeaea;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .comments-count {
@@ -498,7 +498,7 @@ onMounted(async () => {
   gap: 15px;
   margin-bottom: 25px;
   padding: 16px;
-  background-color: #f8f9fa;
+  background-color: var(--paper-2);
   border-radius: var(--radius-sm);
   border: 1px solid #e0e6ef;
 }
@@ -524,7 +524,7 @@ onMounted(async () => {
 
 .comment-textarea {
   width: 100%;
-  border: 1px solid #d0d7e0;
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
   padding: 10px 12px;
   font-size: 14px;
@@ -588,7 +588,7 @@ onMounted(async () => {
   padding: 16px;
   background-color: var(--color-bg-card);
   border-radius: var(--radius-sm);
-  border-left: 4px solid #d0d7e0;
+  border-left: 4px solid var(--color-border);
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 

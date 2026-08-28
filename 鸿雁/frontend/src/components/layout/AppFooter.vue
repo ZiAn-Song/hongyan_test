@@ -1,13 +1,14 @@
 <template>
   <footer class="app-footer">
+    <div class="footer-rule"></div>
     <div class="footer-content">
-      <div class="footer-section">
-        <h3>鸿雁平台</h3>
-        <p>产学研融合助力边疆发展领航者</p>
-        <p>连接地方需求，赋能边疆发展</p>
+      <div class="footer-brand">
+        <p class="brand-name">鸿雁平台</p>
+        <p class="brand-slogan">东西部协作 · 智能资源对接</p>
+        <p class="brand-line">连接地方需求，赋能边疆发展</p>
       </div>
       <div class="footer-section">
-        <h3>快速链接</h3>
+        <h4>快速链接</h4>
         <ul>
           <li><router-link to="/">网站首页</router-link></li>
           <li><router-link to="/publish">发布需求</router-link></li>
@@ -16,72 +17,80 @@
         </ul>
       </div>
       <div class="footer-section">
-        <h3>联系我们</h3>
-        <p><i class="fas fa-envelope"></i> contact@hongyan.edu.cn</p>
-        <p><i class="fas fa-phone"></i> 010-XXXXXXXX</p>
+        <h4>联系我们</h4>
+        <ul>
+          <li>contact@hongyan.edu.cn</li>
+          <li>山东大学经济学院</li>
+        </ul>
       </div>
     </div>
     <div class="footer-bottom">
-      <p>© 2024 鸿雁 - 线上社会实践云平台 版权所有</p>
+      <p>© 2026 鸿雁 · 东西部协作智能资源对接平台</p>
     </div>
   </footer>
 </template>
 
 <style scoped>
 .app-footer {
-  background: linear-gradient(135deg, #2c3e50, #1a252f);
-  color: #ecf0f1;
-  padding: 40px 5% 20px;
+  background: var(--paper-2);
+  color: var(--ink-2);
+  padding: 0 4% 22px;
   margin-top: auto;
+  border-top: 1px solid var(--rule);
+}
+
+.footer-rule {
+  border-top: 3px double var(--ink);
+  max-width: var(--max-width);
+  margin: 0 auto 30px;
+  opacity: 0.55;
 }
 
 .footer-content {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 30px;
+  grid-template-columns: 1.4fr 1fr 1fr;
+  gap: 36px;
   max-width: var(--max-width);
-  margin: 0 auto 30px;
+  margin: 0 auto;
+  padding-bottom: 26px;
 }
 
-.footer-section h3 {
-  font-size: 18px;
-  margin-bottom: 15px;
-  color: white;
+.brand-name {
+  font-family: var(--font-serif);
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: var(--ink);
 }
+.brand-slogan {
+  font-size: 11px;
+  letter-spacing: 2.5px;
+  color: var(--color-primary);
+  margin-top: 6px;
+}
+.brand-line { font-size: 12px; color: var(--ink-3); margin-top: 8px; }
 
-.footer-section p {
-  font-size: 14px;
-  margin-bottom: 8px;
-  color: #bdc3c7;
+.footer-section h4 {
+  font-size: 12px;
+  letter-spacing: 3px;
+  color: var(--ink-3);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  font-weight: 600;
 }
-
-.footer-section p i {
-  margin-right: 8px;
-}
-
-.footer-section ul li {
-  margin-bottom: 8px;
-}
-
-.footer-section ul li a {
-  color: #bdc3c7;
-  text-decoration: none;
-  font-size: 14px;
-  transition: color 0.3s;
-}
-
-.footer-section ul li a:hover {
-  color: white;
-}
+.footer-section li { font-size: 13px; padding: 3px 0; color: var(--ink-2); }
+.footer-section a:hover { color: var(--color-primary); }
 
 .footer-bottom {
+  border-top: 1px solid var(--rule);
+  padding-top: 16px;
   text-align: center;
-  padding-top: 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--ink-3);
 }
 
-.footer-bottom p {
-  font-size: 13px;
-  color: #95a5a6;
+@media (max-width: 760px) {
+  .footer-content { grid-template-columns: 1fr; gap: 22px; }
 }
 </style>

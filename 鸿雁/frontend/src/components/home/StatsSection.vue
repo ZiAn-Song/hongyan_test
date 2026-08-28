@@ -85,7 +85,7 @@ onUnmounted(() => {
 <style scoped>
 .stats-section {
   padding: 60px 5%;
-  background: linear-gradient(135deg, #2c3e50, #4a90e2);
+  background: linear-gradient(135deg, var(--ink), #4a90e2);
   color: white;
   text-align: center;
 }

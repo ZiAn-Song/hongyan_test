@@ -67,9 +67,9 @@ import ImageCarousel from './ImageCarousel.vue'
 const router = useRouter()
 
 const stats = ref([
-  { label: '爬取资讯', value: '...', icon: 'fas fa-rss', color: '#2980b9' },
-  { label: '实践团队', value: '...', icon: 'fas fa-users', color: '#27ae60' },
-  { label: '发布需求', value: '...', icon: 'fas fa-bullhorn', color: '#e67e22' },
+  { label: '爬取资讯', value: '...', icon: 'fas fa-rss', color: 'var(--color-primary)' },
+  { label: '实践团队', value: '...', icon: 'fas fa-users', color: 'var(--el-color-success)' },
+  { label: '发布需求', value: '...', icon: 'fas fa-bullhorn', color: 'var(--el-color-warning)' },
   { label: '论坛帖子', value: '...', icon: 'fas fa-comments', color: '#8e44ad' },
 ])
 
@@ -126,7 +126,7 @@ onMounted(async () => {
 .stat-value {
   font-size: 2rem;
   font-weight: bold;
-  color: #2c3e50;
+  color: var(--ink);
 }
 
 .stat-label {
@@ -151,7 +151,7 @@ onMounted(async () => {
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
   cursor: pointer;
   transition: transform 0.3s, box-shadow 0.3s;
-  border-top: 4px solid #2980b9;
+  border-top: 4px solid var(--color-primary);
 }
 
 .manage-card:hover {
@@ -161,13 +161,13 @@ onMounted(async () => {
 
 .manage-card i {
   font-size: 2.5rem;
-  color: #2980b9;
+  color: var(--color-primary);
   margin-bottom: 15px;
 }
 
 .manage-card h3 {
   font-size: 1.2rem;
-  color: #2c3e50;
+  color: var(--ink);
   margin-bottom: 8px;
 }
 

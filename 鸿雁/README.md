@@ -51,3 +51,40 @@ npm run dev
 3. 构建命令: `pip install -r requirements.txt`
 4. 启动命令: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
 5. 环境变量在 render.yaml 中定义
+
+
+## 智能匹配 v2（三级漏斗）
+
+核心接口：`GET /api/matching/v2/demands/{demand_id}/match?use_llm=true&top_k=8`
+
+```
+第一级 L1  SQL 全量载入：内地供给(36) + 山大人才库(48)
+第二级 L2  关键词打分 + 标签匹配加权 × 三因子动态可信度（来源0.4/时效0.3/核验0.3）
+第三级 L3  DeepSeek V4 研判：评分 + 匹配理由 + 风险提示 + 对接建议
+           （失败自动降级规则模式，服务永不中断）
+附    历史范式参考：已完成成果库的可复制协作点 Top3
+```
+
+- 跨类型统一排序：企业/政府供给与高校科研人才在同一序列竞争排名（candidate_type 标记来源）
+- LLM 网络调用在独立子进程中执行（scripts/llm_call.py），主服务永不因网络层崩溃
+
+### 导入真实数据
+
+```bash
+cd backend
+python scripts/import_real_data.py   # 幂等，导入 142 条案例库 + 48 条人才库
+```
+
+### 环境变量
+
+复制 `.env.example` 为 `.env` 并填入 `DEEPSEEK_API_KEY`。
+
+## RAG 向量召回（L2 增强）
+
+嵌入模型：火山方舟 `doubao-embedding-vision-251215`（多模态端点）。
+
+1. `.env` 填入 `EMBEDDING_API_KEY=<ARK_API_KEY>`
+2. 构建向量索引：`python scripts/build_embeddings.py`（幂等，文本变化自动重建）
+3. 无向量/无 key 时自动降级为关键词+标签匹配；有向量时余弦相似度自动并入 L2 打分
+
+生产 PostgreSQL 时 `resource_embeddings` 表平迁为 pgvector 列即可。

@@ -50,3 +50,29 @@ class MainlandSupply(Base):
     source_url: Mapped[str | None] = mapped_column(String(1000), nullable=True)
     verification_status: Mapped[str | None] = mapped_column(String(50), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+
+
+class CompletedAchievement(Base):
+    """已完成成果（东西部协作历史范式库）"""
+    __tablename__ = "completed_achievements"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    achievement_id: Mapped[str] = mapped_column(String(50), unique=True, index=True)  # CG-001
+    title: Mapped[str] = mapped_column(String(500), index=True)
+    region: Mapped[str | None] = mapped_column(String(300), nullable=True, index=True)   # 如 闽宁协作（福建—宁夏）
+    parties: Mapped[str | None] = mapped_column(String(500), nullable=True)
+    finish_time: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    work_done: Mapped[str | None] = mapped_column(Text, nullable=True)
+    highlights: Mapped[str | None] = mapped_column(Text, nullable=True)
+    achievement_type: Mapped[str | None] = mapped_column(String(100), nullable=True, index=True)
+    replicable_points: Mapped[str | None] = mapped_column(String(500), nullable=True)    # 可复制协作点
+    image_note: Mapped[str | None] = mapped_column(Text, nullable=True)
+    image_link: Mapped[str | None] = mapped_column(String(1000), nullable=True)
+    evidence: Mapped[str | None] = mapped_column(Text, nullable=True)
+    source_level: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    source_body: Mapped[str | None] = mapped_column(String(500), nullable=True)
+    publish_date: Mapped[str | None] = mapped_column(String(50), nullable=True)
+    source_url: Mapped[str | None] = mapped_column(String(1000), nullable=True)
+    verification_status: Mapped[str | None] = mapped_column(String(50), nullable=True)
+    boundary_note: Mapped[str | None] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())

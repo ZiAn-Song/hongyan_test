@@ -5,7 +5,9 @@ from app.models.demand import Demand
 from app.models.forum import ForumPost, ForumComment
 from app.models.document import DocumentChunk
 from app.models.crawler import CrawledArticle
-from app.models.achievement import BorderDemand, MainlandSupply
+from app.models.achievement import BorderDemand, MainlandSupply, CompletedAchievement
+from app.models.talent import SduTalent
+from app.models.embedding import ResourceEmbedding
 
 __all__ = [
     "User",
@@ -19,4 +21,7 @@ __all__ = [
     "CrawledArticle",
     "BorderDemand",
     "MainlandSupply",
+    "CompletedAchievement",
+    "SduTalent",
+    "ResourceEmbedding",
 ]

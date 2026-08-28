@@ -180,7 +180,7 @@ onMounted(async () => {
 
 .activity-image {
   flex: 1.5;
-  background-color: #f8f9fa;
+  background-color: var(--paper-2);
   display: flex;
   align-items: center;
   justify-content: center;

@@ -113,8 +113,8 @@ onMounted(loadDemands)
   font-weight: 600;
 }
 
-.status-open { background: #e8f5e9; color: #2e7d32; }
-.status-closed { background: #ffebee; color: #c62828; }
+.status-open { background: rgba(47,107,79,.08); color: #2f6b4f; }
+.status-closed { background: var(--color-accent-light); color: var(--color-accent); }
 
 .card-location {
   font-size: 0.9rem;

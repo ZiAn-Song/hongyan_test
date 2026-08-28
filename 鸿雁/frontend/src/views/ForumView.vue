@@ -291,7 +291,7 @@ onMounted(async () => {
 .left-content {
   flex: 6;
   background-color: var(--color-bg-card);
-  border: 2px solid #d0d7e0;
+  border: 2px solid var(--color-border);
   border-radius: var(--radius-sm);
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
   padding: 22px;
@@ -302,7 +302,7 @@ onMounted(async () => {
   display: flex;
   margin-bottom: 20px;
   padding-bottom: 12px;
-  border-bottom: 2px solid #eaeaea;
+  border-bottom: 2px solid var(--color-border);
 }
 
 .content-tab {
@@ -322,14 +322,14 @@ onMounted(async () => {
 }
 
 .content-tab:hover {
-  background-color: #f0f7ff;
+  background-color: var(--color-primary-light);
   color: var(--color-link);
 }
 
 .content-tab.active {
   color: var(--color-link);
-  background-color: #e8f2ff;
-  border-color: #d0d7e0;
+  background-color: var(--color-primary-light);
+  border-color: var(--color-border);
   border-bottom-color: var(--color-bg-card);
   position: relative;
   top: 2px;
@@ -344,7 +344,7 @@ onMounted(async () => {
 .post-card {
   display: block;
   padding: 20px 0;
-  border-bottom: 2px solid #eaeaea;
+  border-bottom: 2px solid var(--color-border);
   transition: all 0.3s ease;
   cursor: pointer;
 }
@@ -376,7 +376,7 @@ onMounted(async () => {
   color: #888;
   font-size: 24px;
   flex-shrink: 0;
-  border: 1px solid #c5d9f0;
+  border: 1px solid rgba(30,58,110,.18);
 }
 
 .author-details {
@@ -460,14 +460,14 @@ onMounted(async () => {
 }
 
 .tag-最新 {
-  background-color: #e8f2ff;
+  background-color: var(--color-primary-light);
   color: var(--color-link);
-  border: 1px solid #c5d9f0;
+  border: 1px solid rgba(30,58,110,.18);
 }
 
 .tag-求助 {
   background-color: #fff4e6;
-  color: #e67e22;
+  color: var(--el-color-warning);
   border: 1px solid #f5d9b5;
 }
 
@@ -476,7 +476,7 @@ onMounted(async () => {
 .tag-非遗 {
   background-color: var(--color-accent-light);
   color: var(--color-accent);
-  border: 1px solid #c5d9f0;
+  border: 1px solid rgba(30,58,110,.18);
 }
 
 .post-stats {
@@ -506,7 +506,7 @@ onMounted(async () => {
 
 .sidebar-box {
   background-color: var(--color-bg-card);
-  border: 2px solid #d0d7e0;
+  border: 2px solid var(--color-border);
   border-radius: var(--radius-sm);
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
   overflow: hidden;
@@ -517,8 +517,8 @@ onMounted(async () => {
   align-items: center;
   gap: 8px;
   padding: 14px 20px;
-  background-color: #e8f2ff;
-  border-bottom: 2px solid #d0d7e0;
+  background-color: var(--color-primary-light);
+  border-bottom: 2px solid var(--color-border);
   font-size: 16px;
   font-weight: bold;
   color: var(--color-link);
@@ -538,7 +538,7 @@ onMounted(async () => {
   align-items: flex-start;
   gap: 8px;
   padding: 10px 0;
-  border-bottom: 1px dashed #eaeaea;
+  border-bottom: 1px dashed var(--color-border);
 }
 
 .notice-item:last-child {
@@ -559,7 +559,7 @@ onMounted(async () => {
 }
 
 .tag-activity {
-  background-color: #e8f2ff;
+  background-color: var(--color-primary-light);
   color: var(--color-link);
 }
 
@@ -582,7 +582,7 @@ onMounted(async () => {
   align-items: center;
   gap: 10px;
   padding: 9px 0;
-  border-bottom: 1px dashed #eaeaea;
+  border-bottom: 1px dashed var(--color-border);
 }
 
 .topic-item:last-child {
@@ -608,7 +608,7 @@ onMounted(async () => {
 }
 
 .rank-2 {
-  background-color: #e67e22;
+  background-color: var(--el-color-warning);
 }
 
 .rank-3 {

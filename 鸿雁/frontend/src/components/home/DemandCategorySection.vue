@@ -21,12 +21,12 @@
 
 <script setup>
 const categories = [
-  { name: '医疗健康', icon: 'fas fa-heartbeat', color: '#1d71b8', bg: 'linear-gradient(135deg, #f0f7ff, #e6f0ff)', link: '/category?key=health' },
-  { name: '基础建设', icon: 'fas fa-hard-hat', color: '#2c9c6b', bg: 'linear-gradient(135deg, #f0fff4, #e6ffec)', link: '/category?key=infrastructure' },
-  { name: '教育民生', icon: 'fas fa-graduation-cap', color: '#e67e22', bg: 'linear-gradient(135deg, #fff8f0, #fff0e6)', link: '/category?key=education' },
-  { name: '基层治理', icon: 'fas fa-landmark', color: '#9b59b6', bg: 'linear-gradient(135deg, #f8f0ff, #f0e6ff)', link: '/category?key=governance' },
-  { name: '文旅', icon: 'fas fa-mountain', color: '#c8102e', bg: 'linear-gradient(135deg, #fff0f5, #ffe6ee)', link: '/category?key=tourism' },
-  { name: '环境', icon: 'fas fa-leaf', color: '#1a8a5b', bg: 'linear-gradient(135deg, #f0fff8, #e6fff0)', link: '/category?key=environment' },
+  { name: '医疗健康', icon: 'fas fa-heartbeat', color: 'var(--color-primary)', bg: 'linear-gradient(135deg, var(--color-primary-light), var(--color-primary-light))', link: '/category?key=health' },
+  { name: '基础建设', icon: 'fas fa-hard-hat', color: 'var(--el-color-success)', bg: 'linear-gradient(135deg, #f0fff4, rgba(47,107,79,.08))', link: '/category?key=infrastructure' },
+  { name: '教育民生', icon: 'fas fa-graduation-cap', color: 'var(--el-color-warning)', bg: 'linear-gradient(135deg, #fff8f0, #fff0e6)', link: '/category?key=education' },
+  { name: '基层治理', icon: 'fas fa-landmark', color: 'var(--talent)', bg: 'linear-gradient(135deg, var(--talent-bg), var(--talent-bg))', link: '/category?key=governance' },
+  { name: '文旅', icon: 'fas fa-mountain', color: '#16305c', bg: 'linear-gradient(135deg, #fff0f5, var(--color-accent-light))', link: '/category?key=tourism' },
+  { name: '环境', icon: 'fas fa-leaf', color: '#2f6b4f', bg: 'linear-gradient(135deg, #f0fff8, #e6fff0)', link: '/category?key=environment' },
 ]
 </script>
 
@@ -43,7 +43,7 @@ const categories = [
 
 .section-title {
   font-size: 26px;
-  color: var(--color-accent-dark, #c8102e);
+  color: var(--color-accent-dark, #16305c);
   font-weight: 700;
   margin-bottom: 6px;
   position: relative;
@@ -57,7 +57,7 @@ const categories = [
   left: 0;
   width: 60px;
   height: 3px;
-  background: var(--color-accent, #c8102e);
+  background: var(--color-accent, #16305c);
 }
 
 .section-desc {

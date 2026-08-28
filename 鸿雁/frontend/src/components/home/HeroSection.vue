@@ -1,185 +1,138 @@
 <template>
   <section class="hero">
-    <div class="text-container">
-      <h2>连接地方需求 赋能边疆发展</h2>
-      <p class="subtitle">云边端协同、产学研融合 助力边疆发展</p>
-      <p class="description">以温和的坚守，在你选择的路上深深扎根，你的存在本身正改变着时代的风向</p>
+    <div class="hero-inner">
+      <p class="hero-kicker">东西部协作 · 对口支援 · 智能对接</p>
+      <h2>当边疆需求遇上<em>内地供给</em><br>三级漏斗给出确定性答案</h2>
+      <p class="subtitle">需求理解 · 三级漏斗匹配 · 大模型研判 · 历史范式参考</p>
+      <div class="hero-actions">
+        <router-link to="/demand" class="hero-btn primary">进入需求大厅</router-link>
+        <router-link to="/achievement" class="hero-btn ghost">成果展示</router-link>
+      </div>
+      <div class="hero-stats">
+        <span><b>51</b>边疆需求</span>
+        <span class="div"></span>
+        <span><b>36</b>内地供给</span>
+        <span class="div"></span>
+        <span><b>48</b>山大人才</span>
+        <span class="div"></span>
+        <span><b>55</b>成果范式</span>
+      </div>
     </div>
   </section>
-
-  <div class="transition-section">
-    <div class="transition-text"></div>
-  </div>
 </template>
 
 <style scoped>
 .hero {
-  background: url('/img/pic1.jpg');
-  background-size: cover;
-  background-position: center calc(50% - 40px);
-  color: white;
-  padding: 100px 5% 80px 5%;
-  text-align: center;
-  height: 70vh;
-  min-height: 500px;
-  max-height: 800px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  background: var(--paper);
+  padding: 72px 4% 60px;
   position: relative;
-  margin-top: -100px;
+  overflow: hidden;
+}
+/* 极淡网格底纹（编辑风材质） */
+.hero::before {
+  content: "";
+  position: absolute; inset: 0; z-index: 0;
+  background:
+    radial-gradient(ellipse 620px 380px at 12% -10%, rgba(30, 58, 110, 0.06), transparent),
+    radial-gradient(ellipse 520px 340px at 92% 4%, rgba(163, 58, 42, 0.04), transparent),
+    linear-gradient(rgba(28, 25, 23, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(28, 25, 23, 0.025) 1px, transparent 1px);
+  background-size: auto, auto, 44px 44px, 44px 44px;
 }
 
-.text-container {
-  background-color: rgba(0, 0, 0, 0.5);
-  padding: 40px;
-  border-radius: 15px;
-  max-width: 900px;
+.hero-inner {
+  position: relative; z-index: 1;
+  max-width: var(--max-width);
   margin: 0 auto;
-  backdrop-filter: blur(5px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  text-align: center;
+}
+
+.hero-kicker {
+  font-size: 11.5px;
+  letter-spacing: 5px;
+  color: var(--color-accent);
+  font-weight: 700;
+  margin-bottom: 18px;
 }
 
 .hero h2 {
-  font-size: 42px;
-  margin-bottom: 20px;
+  font-family: var(--font-serif);
+  font-size: clamp(30px, 4.6vw, 46px);
+  line-height: 1.5;
+  letter-spacing: 2px;
+  color: var(--ink);
   font-weight: 700;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
-  line-height: 1.2;
+}
+.hero h2 em {
+  font-style: normal;
+  color: var(--color-primary);
+  border-bottom: 3px solid rgba(30, 58, 110, 0.25);
 }
 
-.hero .subtitle {
-  font-size: 24px;
-  margin-bottom: 30px;
-  color: #ecf0f1;
-  font-weight: 300;
-  text-shadow: 0 1px 5px rgba(0, 0, 0, 0.6);
+.subtitle {
+  margin-top: 18px;
+  font-size: 14px;
+  letter-spacing: 4px;
+  color: var(--ink-3);
 }
 
-.hero .description {
-    font-size: 18px;
-    max-width: 800px;
-    margin: 0 auto 30px;
-    line-height: 1.8;
-    font-style: italic;
-    color: #dfe6e9;
-    text-shadow: 0 1px 5px rgba(0, 0, 0, 0.6);
-  }
-
-  .cta-row {
-    display: flex;
-    justify-content: center;
-    gap: 16px;
-    flex-wrap: wrap;
-  }
-
-  .btn-primary {
-    display: inline-block;
-    padding: 12px 24px;
-    background: var(--color-accent, #c8102e);
-    color: #fff;
-    border-radius: 10px;
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 15px;
-    transition: transform 0.2s, opacity 0.2s;
-  }
-
-  .btn-primary:hover {
-    transform: translateY(-2px);
-    opacity: 0.9;
-  }
-
-.transition-section {
-  background: linear-gradient(to bottom, #2c3e50, #f9f9f9);
-  height: 70px;
+.hero-actions {
+  margin-top: 34px;
   display: flex;
+  gap: 14px;
   justify-content: center;
+  flex-wrap: wrap;
+}
+.hero-btn {
+  padding: 11px 34px;
+  font-size: 14px;
+  letter-spacing: 2px;
+  border-radius: var(--radius-sm);
+  transition: transform 0.25s var(--ease-out), box-shadow 0.25s var(--ease-out),
+              background 0.2s, color 0.2s;
+}
+.hero-btn.primary {
+  background: var(--color-primary);
+  color: #fff;
+  font-weight: 650;
+}
+.hero-btn.primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(30, 58, 110, 0.26);
+  background: var(--color-primary-dark);
+}
+.hero-btn.ghost {
+  border: 1px solid var(--rule);
+  color: var(--ink-2);
+}
+.hero-btn.ghost:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  transform: translateY(-2px);
+}
+
+.hero-stats {
+  margin-top: 44px;
+  display: inline-flex;
   align-items: center;
-  text-align: center;
-  color: white;
-  padding: 0 5%;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: var(--ink-3);
+  padding: 12px 28px;
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
 }
-
-@media (max-width: 1024px) {
-  .hero {
-    height: 60vh;
-    min-height: 400px;
-  }
-
-  .hero h2 {
-    font-size: 36px;
-  }
-
-  .hero .subtitle {
-    font-size: 20px;
-  }
-
-  .hero .description {
-    font-size: 17px;
-  }
-
-  .text-container {
-    padding: 30px;
-  }
+.hero-stats b {
+  font-family: Georgia, var(--font-mono);
+  font-size: 19px;
+  color: var(--color-primary);
+  margin-right: 6px;
+  font-weight: 700;
 }
-
-@media (max-width: 768px) {
-  .hero {
-    height: 50vh;
-    min-height: 350px;
-    padding: 60px 5%;
-  }
-
-  .hero h2 {
-    font-size: 32px;
-  }
-
-  .hero .subtitle {
-    font-size: 18px;
-    margin-bottom: 20px;
-  }
-
-  .hero .description {
-    font-size: 16px;
-    margin-bottom: 20px;
-  }
-
-  .text-container {
-    padding: 25px;
-  }
-
-  .transition-section {
-    height: 60px;
-  }
-}
-
-@media (max-width: 480px) {
-  .hero {
-    height: 45vh;
-    min-height: 300px;
-    padding: 40px 5%;
-  }
-
-  .hero h2 {
-    font-size: 26px;
-  }
-
-  .hero .subtitle {
-    font-size: 16px;
-  }
-
-  .hero .description {
-    font-size: 14px;
-  }
-
-  .text-container {
-    padding: 20px;
-  }
-
-  .transition-section {
-    height: 50px;
-  }
-}
+.hero-stats .div { width: 1px; height: 14px; background: var(--rule); }
 </style>

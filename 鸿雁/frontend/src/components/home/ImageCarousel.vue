@@ -115,7 +115,7 @@ onUnmounted(() => {
 }
 
 .image-carousel {
-  background-color: #f8f9fa;
+  background-color: var(--paper-2);
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
@@ -239,7 +239,7 @@ onUnmounted(() => {
   gap: 8px;
   font-size: 16px;
   font-weight: 700;
-  color: var(--color-accent-dark, #2c3e50);
+  color: var(--color-accent-dark, var(--ink));
   padding-bottom: 8px;
   border-bottom: 2px solid var(--color-accent, #4a90e2);
 }

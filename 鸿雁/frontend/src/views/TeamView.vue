@@ -421,12 +421,12 @@ onMounted(() => {
 <style scoped>
 .page {
   min-height: 100vh;
-  background-color: #f5f9ff;
+  background-color: var(--paper);
 }
 
 /* ---------- 页面头部 ---------- */
 .page-header {
-  background: linear-gradient(135deg, var(--color-primary-darker) 0%, #72090e 100%);
+  background: linear-gradient(135deg, var(--color-primary-darker) 0%, var(--color-primary-dark) 100%);
   color: white;
   padding: 50px 5% 40px;
   text-align: center;
@@ -529,7 +529,7 @@ onMounted(() => {
 
 .filter-btn {
   padding: 10px 25px;
-  background: linear-gradient(135deg, var(--color-primary-darker) 0%, #72090e 100%);
+  background: linear-gradient(135deg, var(--color-primary-darker) 0%, var(--color-primary-dark) 100%);
   color: white;
   border: none;
   border-radius: var(--radius-pill);
@@ -550,7 +550,7 @@ onMounted(() => {
 
 .reset-btn {
   padding: 10px 20px;
-  background-color: #f8f9fa;
+  background-color: var(--paper-2);
   border: 2px solid var(--color-border);
   border-radius: var(--radius-pill);
   cursor: pointer;
@@ -572,7 +572,7 @@ onMounted(() => {
 .results-info {
   margin-bottom: 25px;
   padding: 15px 20px;
-  background-color: #ffe6e6;
+  background-color: var(--color-primary-light);
   border-radius: var(--radius-sm);
   color: var(--color-primary-darker);
   font-weight: 500;
@@ -723,7 +723,7 @@ onMounted(() => {
 }
 
 .teacher-section {
-  background-color: #f0f7ff;
+  background-color: var(--color-primary-light);
   border-radius: var(--radius-sm);
   padding: 20px;
   margin-bottom: 25px;
@@ -752,7 +752,7 @@ onMounted(() => {
   background-color: var(--color-bg-card);
   padding: 12px 18px;
   border-radius: var(--radius-sm);
-  border: 1px solid #e0e6ed;
+  border: 1px solid var(--color-border);
   font-size: 0.95rem;
   color: var(--color-text-light);
 }
@@ -797,7 +797,7 @@ onMounted(() => {
 }
 
 .contact-tag {
-  background-color: #ffe6e6;
+  background-color: var(--color-primary-light);
   color: var(--color-primary-darker);
   padding: 5px 14px;
   border-radius: var(--radius-pill);
@@ -805,7 +805,7 @@ onMounted(() => {
 }
 
 .contact-btn {
-  background: linear-gradient(135deg, var(--color-primary-darker) 0%, #72090e 100%);
+  background: linear-gradient(135deg, var(--color-primary-darker) 0%, var(--color-primary-dark) 100%);
   color: white;
   border: none;
   padding: 12px 30px;
@@ -822,7 +822,7 @@ onMounted(() => {
 }
 
 .contact-btn:hover {
-  background: linear-gradient(135deg, #72090e 0%, #4d0609 100%);
+  background: linear-gradient(135deg, var(--color-primary-dark) 0%, #4d0609 100%);
   transform: translateY(-2px);
 }
 
@@ -840,7 +840,7 @@ onMounted(() => {
   border-radius: var(--radius-pill);
   font-size: 0.85rem;
   font-weight: bold;
-  background-color: #ffe6e6;
+  background-color: var(--color-primary-light);
   color: var(--color-primary-darker);
 }
 
@@ -871,7 +871,7 @@ onMounted(() => {
   text-align: center;
   padding: 50px;
   color: var(--color-primary);
-  background-color: #ffe6e6;
+  background-color: var(--color-primary-light);
   border-radius: var(--radius-md);
   margin: 20px 0;
 }
@@ -1072,23 +1072,23 @@ onMounted(() => {
 }
 
 .sdu-badge {
-  background: linear-gradient(135deg, #1a5276, #2980b9);
+  background: linear-gradient(135deg, var(--color-primary-dark), var(--color-primary));
   color: white;
 }
 
 .platform-badge {
-  background: linear-gradient(135deg, var(--color-primary-darker), #72090e);
+  background: linear-gradient(135deg, var(--color-primary-darker), var(--color-primary-dark));
   color: white;
 }
 
 /* ---------- 山大科研团队卡片 ---------- */
 .sdu-card {
-  border-left: 6px solid #2980b9;
+  border-left: 6px solid var(--color-primary);
 }
 
 .sdu-cat-tag {
-  background: #e8f4fd !important;
-  color: #1a5276 !important;
+  background: var(--color-primary-light) !important;
+  color: var(--color-primary-dark) !important;
 }
 
 .sdu-detail-block {
@@ -1096,13 +1096,13 @@ onMounted(() => {
   padding: 14px 18px;
   background-color: var(--color-bg-alt);
   border-radius: var(--radius-sm);
-  border-left: 4px solid #2980b9;
+  border-left: 4px solid var(--color-primary);
 }
 
 .sdu-detail-label {
   font-size: 0.9rem;
   font-weight: 600;
-  color: #1a5276;
+  color: var(--color-primary-dark);
   margin-bottom: 6px;
   display: flex;
   align-items: center;
@@ -1110,7 +1110,7 @@ onMounted(() => {
 }
 
 .sdu-detail-label i {
-  color: #2980b9;
+  color: var(--color-primary);
 }
 
 .sdu-detail-content {
@@ -1131,7 +1131,7 @@ onMounted(() => {
 }
 
 .sdu-link-btn {
-  background: linear-gradient(135deg, #1a5276 0%, #2980b9 100%) !important;
+  background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 100%) !important;
   box-shadow: 0 5px 15px rgba(41, 128, 185, 0.3) !important;
   text-decoration: none;
   display: inline-flex;

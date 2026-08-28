@@ -41,7 +41,7 @@ const outcomes = [
 
 .section-title {
   font-size: 26px;
-  color: var(--color-accent-dark, #c8102e);
+  color: var(--color-accent-dark, #16305c);
   font-weight: 700;
   margin-bottom: 6px;
   position: relative;
@@ -55,7 +55,7 @@ const outcomes = [
   left: 0;
   width: 60px;
   height: 3px;
-  background: var(--color-accent, #c8102e);
+  background: var(--color-accent, #16305c);
 }
 
 .section-desc {
@@ -65,7 +65,7 @@ const outcomes = [
 }
 
 .view-all {
-  color: var(--color-accent, #c8102e);
+  color: var(--color-accent, #16305c);
   text-decoration: none;
   font-size: 14px;
   font-weight: 500;
@@ -94,7 +94,7 @@ const outcomes = [
 
 .outcome-icon {
   font-size: 32px;
-  color: var(--color-accent, #c8102e);
+  color: var(--color-accent, #16305c);
   margin-bottom: 12px;
 }
 
@@ -112,7 +112,7 @@ const outcomes = [
 }
 
 .outcome-link {
-  color: var(--color-accent, #c8102e);
+  color: var(--color-accent, #16305c);
   text-decoration: none;
   font-size: 13px;
   font-weight: 600;

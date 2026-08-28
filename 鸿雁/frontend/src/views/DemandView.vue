@@ -302,9 +302,29 @@
                 <span class="match-summary-item" v-if="matchingResult.filter_info?.subject_type">
                   <i class="fas fa-tag"></i> {{ matchingResult.filter_info.subject_type }}
                 </span>
-                <span class="match-summary-item" v-if="matchingResult.filter_info?.province">
+                <span class="match-summary-item" v-if="matchingResult.filter_info?.province && !matchingResult.is_v2">
                   <i class="fas fa-map-marker-alt"></i> {{ matchingResult.filter_info.province }}
                 </span>
+                <template v-if="matchingResult.is_v2">
+                  <span class="match-summary-item v2-badge">
+                    <i class="fas fa-layer-group"></i> L1 {{ matchingResult.filter_info.candidate_count }}
+                  </span>
+                  <span class="match-summary-item v2-badge">
+                    <i class="fas fa-check-double"></i> L2 {{ matchingResult.filter_info.matched_count }}
+                  </span>
+                  <span class="match-summary-item v2-badge" :class="{ llm: matchingResult.filter_info.judge_mode === 'llm' }">
+                    <i class="fas fa-brain"></i> {{ matchingResult.filter_info.judge_mode === 'llm' ? 'DeepSeek 研判' : '规则模式' }}
+                  </span>
+                </template>
+              </div>
+
+              <!-- 历史范式参考 -->
+              <div v-if="matchingResult.is_v2 && matchingResult.history_reference?.length" class="history-reference">
+                <h4 class="hr-title"><i class="fas fa-history"></i> 历史范式参考 · 已完成成果可复制协作点</h4>
+                <div v-for="(r, ri) in matchingResult.history_reference" :key="ri" class="hr-card">
+                  <p class="hr-name">{{ r.title }}</p>
+                  <p class="hr-meta">{{ r.region }}　|　可复制点：{{ r.replicable_points }}</p>
+                </div>
               </div>
 
               <div v-if="matchingResult.matches && matchingResult.matches.length > 0" class="match-results">
@@ -347,8 +367,25 @@
                     </p>
                     <div class="match-scores">
                       <span class="score-badge total">综合 {{ m.score }}</span>
-                      <span class="score-badge">关键词 {{ m.keyword_score }}</span>
-                      <span class="score-badge">标签 {{ m.tag_score }}</span>
+                      <template v-if="matchingResult.is_v2">
+                        <span class="score-badge v2-tag" :class="m.candidate_type">
+                          {{ m.candidate_type === 'talent' ? '山大人才' : '企业/机构' }}
+                        </span>
+                        <span class="score-badge">关键词 {{ m.keyword_score }}</span>
+                        <span class="score-badge">标签 {{ m.tag_score }}</span>
+                        <span class="score-badge" v-if="m.credibility != null" title="三因子：来源0.4+时效0.3+核验0.3">
+                          可信度 {{ m.credibility }}
+                        </span>
+                      </template>
+                      <template v-else>
+                        <span class="score-badge">关键词 {{ m.keyword_score }}</span>
+                        <span class="score-badge">标签 {{ m.tag_score }}</span>
+                      </template>
+                    </div>
+                    <div v-if="m.llm_reason" class="llm-judge">
+                      <p class="llm-row"><strong><i class="fas fa-brain"></i> 研判理由</strong>{{ truncateText(m.llm_reason, 180) }}</p>
+                      <p class="llm-row" v-if="m.llm_risk"><strong><i class="fas fa-exclamation-triangle"></i> 风险提示</strong>{{ truncateText(m.llm_risk, 120) }}</p>
+                      <p class="llm-row" v-if="m.llm_suggestion"><strong><i class="fas fa-lightbulb"></i> 对接建议</strong>{{ truncateText(m.llm_suggestion, 140) }}</p>
                     </div>
                   </div>
                 </div>
@@ -378,7 +415,7 @@
 import AppHeader from '@/components/layout/AppHeader.vue'
 import AppFooter from '@/components/layout/AppFooter.vue'
 import { ref, computed, onMounted, watch } from 'vue'
-import { matchSuppliesForDemand, matchDemandsForSupply } from '@/api/matching'
+import { matchSuppliesForDemand, matchDemandsForSupply, matchDemandV2 } from '@/api/matching'
 
 /* ---------- Tab 切换 ---------- */
 const activeTab = ref('borderDemands')
@@ -519,8 +556,42 @@ const runMatchSupplies = async (item) => {
   matchingTitle.value = item['需求标题'] || item['需求ID']
   document.body.style.overflow = 'hidden'
   try {
-    const res = await matchSuppliesForDemand(item['需求ID'], { top_k: 5 })
-    matchingResult.value = res
+    const res = await matchDemandV2(item['需求ID'], { top_k: 5, use_llm: true })
+    // 适配 v2 三级漏斗结构：保留旧模板字段 + 挂载新能力
+    const fi = res.filter_info || {}
+    matchingResult.value = {
+      demand: res.demand,
+      total: res.total,
+      filter_info: {
+        candidate_count: fi.level1_candidates ?? 0,
+        matched_count: fi.level2_matched ?? 0,
+        judge_mode: fi.judge_mode || 'rule',
+      },
+      history_reference: res.history_reference || [],
+      is_v2: true,
+      matches: (res.matches || []).map(m => ({
+        score: m.final_score ?? m.score,
+        keyword_score: m.keyword_score,
+        tag_score: m.tag_score,
+        credibility: m.credibility,
+        source_weight: m.source_weight,
+        timeliness: m.timeliness,
+        verification: m.verification,
+        candidate_type: m.candidate_type || 'enterprise',
+        llm_reason: m.llm_match_reason,
+        llm_risk: m.llm_risk,
+        llm_suggestion: m.llm_suggestion,
+        judge_mode: m.judge_mode,
+        supply: {
+          provider: m.provider,
+          location: m.location,
+          subject_type: m.subject_type,
+          border_fit: m.border_fit,
+          services: m.services,
+        },
+        demand: {},
+      })),
+    }
   } catch (e) {
     console.error('匹配失败:', e)
     matchingResult.value = { error: true, message: '匹配请求失败，请检查后端服务是否运行' }
@@ -572,15 +643,15 @@ onMounted(async () => {
 <style scoped>
 .page {
   min-height: 100vh;
-  background-color: #f5f9ff;
+  background-color: var(--paper);
 }
 
 .page-header {
-  background: linear-gradient(135deg, #1a5276 0%, #2980b9 100%);
-  color: white;
-  padding: 50px 5% 40px;
+  background: var(--paper-2);
+  color: var(--ink);
+  padding: 46px 5% 38px;
   text-align: center;
-  box-shadow: 0 10px 25px rgba(26, 82, 118, 0.25);
+  border-bottom: 3px double var(--ink);
 }
 
 .page-header h1 {
@@ -614,7 +685,7 @@ onMounted(async () => {
 .filter-title {
   font-size: 1.2rem;
   font-weight: 600;
-  color: #2c3e50;
+  color: var(--ink);
   margin-bottom: 20px;
   display: flex;
   align-items: center;
@@ -622,7 +693,7 @@ onMounted(async () => {
 }
 
 .filter-title i {
-  color: #2980b9;
+  color: var(--color-primary);
 }
 
 .category-filter {
@@ -633,12 +704,12 @@ onMounted(async () => {
 
 .category-btn {
   padding: 10px 20px;
-  background-color: #f8f9fa;
-  border: 2px solid #e0e0e0;
+  background-color: var(--paper-2);
+  border: 2px solid var(--color-border);
   border-radius: 25px;
   cursor: pointer;
   font-size: 1rem;
-  color: #555;
+  color: var(--ink-2);
   transition: all 0.3s;
 }
 
@@ -648,8 +719,8 @@ onMounted(async () => {
 }
 
 .category-btn.active {
-  background-color: #2980b9;
-  border-color: #2980b9;
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
   color: white;
 }
 
@@ -662,7 +733,7 @@ onMounted(async () => {
 
 .filter-btn {
   padding: 10px 25px;
-  background: linear-gradient(135deg, #1a5276 0%, #2980b9 100%);
+  background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 100%);
   color: white;
   border: none;
   border-radius: 25px;
@@ -682,13 +753,13 @@ onMounted(async () => {
 
 .reset-btn {
   padding: 10px 20px;
-  background-color: #f8f9fa;
-  border: 2px solid #e0e0e0;
+  background-color: var(--paper-2);
+  border: 2px solid var(--color-border);
   border-radius: 25px;
   cursor: pointer;
   font-weight: 500;
   font-size: 0.95rem;
-  color: #555;
+  color: var(--ink-2);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -696,15 +767,15 @@ onMounted(async () => {
 }
 
 .reset-btn:hover {
-  background-color: #f0f0f0;
+  background-color: var(--paper-2);
 }
 
 .results-info {
   margin-bottom: 25px;
   padding: 15px 20px;
-  background-color: #e8f4fd;
+  background-color: var(--color-primary-light);
   border-radius: 8px;
-  color: #1a5276;
+  color: var(--color-primary-dark);
   font-weight: 500;
   display: flex;
   justify-content: space-between;
@@ -722,7 +793,7 @@ onMounted(async () => {
   border-radius: 12px;
   padding: 30px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-  border-left: 6px solid #2980b9;
+  border-left: 6px solid var(--color-primary);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -732,7 +803,7 @@ onMounted(async () => {
 }
 
 .demand-title {
-  color: #1a5276;
+  color: var(--color-primary-dark);
   font-size: 1.8rem;
   margin-bottom: 10px;
   display: flex;
@@ -746,24 +817,24 @@ onMounted(async () => {
   gap: 30px;
   margin-bottom: 15px;
   padding-bottom: 15px;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--paper-2);
   flex-wrap: wrap;
 }
 
 .info-item {
   font-size: 1.05rem;
-  color: #555;
+  color: var(--ink-2);
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
 .info-item i {
-  color: #2980b9;
+  color: var(--color-primary);
 }
 
 .majors-section {
-  background-color: #f8f9fa;
+  background-color: var(--paper-2);
   border-radius: 8px;
   padding: 20px;
   margin-bottom: 25px;
@@ -771,7 +842,7 @@ onMounted(async () => {
 
 .majors-title {
   font-size: 1.2rem;
-  color: #2c3e50;
+  color: var(--ink);
   margin-bottom: 10px;
   display: flex;
   align-items: center;
@@ -779,7 +850,7 @@ onMounted(async () => {
 }
 
 .majors-title i {
-  color: #2980b9;
+  color: var(--color-primary);
 }
 
 .majors-list {
@@ -789,27 +860,27 @@ onMounted(async () => {
 }
 
 .major-tag {
-  background-color: #e3f2fd;
-  color: #1565c0;
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
   padding: 6px 14px;
   border-radius: 20px;
   font-size: 0.9rem;
 }
 
 .no-majors {
-  color: #999;
+  color: var(--ink-3);
   font-style: italic;
   font-size: 0.9rem;
 }
 
 .demand-content {
   margin-bottom: 25px;
-  color: #444;
+  color: var(--ink-2);
   line-height: 1.7;
   padding: 15px 20px;
-  background-color: #f8f9fa;
+  background-color: var(--paper-2);
   border-radius: 8px;
-  border-left: 4px solid #2980b9;
+  border-left: 4px solid var(--color-primary);
 }
 
 .content-title {
@@ -818,11 +889,11 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #2c3e50;
+  color: var(--ink);
 }
 
 .content-title i {
-  color: #2980b9;
+  color: var(--color-primary);
 }
 
 .contact-info {
@@ -830,7 +901,7 @@ onMounted(async () => {
   justify-content: space-between;
   align-items: center;
   padding-top: 20px;
-  border-top: 1px dashed #e0e0e0;
+  border-top: 1px dashed var(--color-border);
   flex-wrap: wrap;
   gap: 15px;
 }
@@ -845,7 +916,7 @@ onMounted(async () => {
 .contact-name {
   font-size: 1.3rem;
   font-weight: bold;
-  color: #1a5276;
+  color: var(--color-primary-dark);
 }
 
 .contact-tags {
@@ -855,15 +926,15 @@ onMounted(async () => {
 }
 
 .contact-tag {
-  background-color: #e8f4fd;
-  color: #1a5276;
+  background-color: var(--color-primary-light);
+  color: var(--color-primary-dark);
   padding: 5px 14px;
   border-radius: 20px;
   font-size: 0.9rem;
 }
 
 .contact-btn {
-  background: linear-gradient(135deg, #1a5276 0%, #2980b9 100%);
+  background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 100%);
   color: white;
   border: none;
   padding: 12px 30px;
@@ -885,7 +956,7 @@ onMounted(async () => {
 
 .divider {
   height: 2px;
-  background: linear-gradient(to right, transparent, #2980b9, transparent);
+  background: linear-gradient(to right, transparent, var(--color-primary), transparent);
   margin: 30px 0;
   border: none;
 }
@@ -899,24 +970,24 @@ onMounted(async () => {
 }
 
 .status-open {
-  background-color: #e8f5e9;
-  color: #2e7d32;
+  background-color: rgba(47,107,79,.08);
+  color: #2f6b4f;
 }
 
 .status-closed {
-  background-color: #ffebee;
-  color: #c62828;
+  background-color: var(--color-accent-light);
+  color: var(--color-accent);
 }
 
 .loading {
   text-align: center;
   padding: 60px;
-  color: #777;
+  color: var(--ink-3);
 }
 
 .spinner {
-  border: 4px solid #e0e0e0;
-  border-top: 4px solid #2980b9;
+  border: 4px solid var(--color-border);
+  border-top: 4px solid var(--color-primary);
   border-radius: 50%;
   width: 48px;
   height: 48px;
@@ -932,8 +1003,8 @@ onMounted(async () => {
 .error-box {
   text-align: center;
   padding: 50px;
-  color: #c0392b;
-  background-color: #ffebee;
+  color: var(--color-accent);
+  background-color: var(--color-accent-light);
   border-radius: 12px;
   margin: 20px 0;
 }
@@ -941,7 +1012,7 @@ onMounted(async () => {
 .error-box i {
   font-size: 2.5rem;
   margin-bottom: 15px;
-  color: #c0392b;
+  color: var(--color-accent);
 }
 
 .error-box p {
@@ -951,7 +1022,7 @@ onMounted(async () => {
 
 .reload-btn {
   padding: 10px 24px;
-  background: #2980b9;
+  background: var(--color-primary);
   color: white;
   border: none;
   border-radius: 8px;
@@ -965,13 +1036,13 @@ onMounted(async () => {
 }
 
 .reload-btn:hover {
-  background: #1a5276;
+  background: var(--color-primary-dark);
 }
 
 .no-data {
   text-align: center;
   padding: 60px;
-  color: #777;
+  color: var(--ink-3);
   background-color: #fff;
   border-radius: 12px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
@@ -981,17 +1052,17 @@ onMounted(async () => {
 .no-data i {
   font-size: 4rem;
   margin-bottom: 20px;
-  color: #ddd;
+  color: var(--rule);
 }
 
 .no-data h3 {
   font-size: 1.5rem;
   margin-bottom: 10px;
-  color: #2c3e50;
+  color: var(--ink);
 }
 
 .no-data p {
-  color: #999;
+  color: var(--ink-3);
   margin-bottom: 20px;
 }
 
@@ -1019,29 +1090,29 @@ onMounted(async () => {
   font-size: 0.95rem;
   min-width: 40px;
   text-align: center;
-  color: #555;
+  color: var(--ink-2);
 }
 
 .page-btn:hover:not(.disabled) {
-  background-color: #f0f0f0;
-  border-color: #2980b9;
-  color: #2980b9;
+  background-color: var(--paper-2);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
 }
 
 .page-btn.active {
-  background-color: #2980b9;
+  background-color: var(--color-primary);
   color: white;
-  border-color: #2980b9;
+  border-color: var(--color-primary);
 }
 
 .page-btn.disabled {
   opacity: 0.5;
   cursor: not-allowed;
-  background-color: #f8f9fa;
+  background-color: var(--paper-2);
 }
 
 .page-info {
-  color: #999;
+  color: var(--ink-3);
   font-size: 0.9rem;
   margin: 0 12px;
 }
@@ -1113,7 +1184,7 @@ onMounted(async () => {
   display: flex;
   gap: 5px;
   margin-bottom: 25px;
-  background: #eef5fc;
+  background: var(--color-primary-light);
   border-radius: 12px;
   padding: 6px;
 }
@@ -1127,7 +1198,7 @@ onMounted(async () => {
   cursor: pointer;
   font-size: 1rem;
   font-weight: 600;
-  color: #666;
+  color: var(--ink-2);
   transition: all 0.3s;
   display: flex;
   align-items: center;
@@ -1137,20 +1208,20 @@ onMounted(async () => {
 
 .tab-btn.active {
   background: white;
-  color: #2980b9;
+  color: var(--color-primary);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
 }
 
 .tab-count {
-  background: #2980b922;
-  color: #2980b9;
+  background: var(--color-primary)22;
+  color: var(--color-primary);
   padding: 2px 8px;
   border-radius: 10px;
   font-size: 0.8rem;
 }
 
 .tab-btn.active .tab-count {
-  background: #2980b9;
+  background: var(--color-primary);
   color: white;
 }
 
@@ -1173,26 +1244,26 @@ onMounted(async () => {
   left: 14px;
   top: 50%;
   transform: translateY(-50%);
-  color: #999;
+  color: var(--ink-3);
 }
 
 .search-input {
   width: 100%;
   padding: 12px 16px 12px 42px;
-  border: 2px solid #e0e0e0;
+  border: 2px solid var(--color-border);
   border-radius: 10px;
   font-size: 1rem;
   transition: border-color 0.3s;
 }
 
 .search-input:focus {
-  border-color: #2980b9;
+  border-color: var(--color-primary);
   outline: none;
 }
 
 .filter-select {
   padding: 12px 16px;
-  border: 2px solid #e0e0e0;
+  border: 2px solid var(--color-border);
   border-radius: 10px;
   font-size: 1rem;
   background: white;
@@ -1201,7 +1272,7 @@ onMounted(async () => {
 }
 
 .filter-select:focus {
-  border-color: #2980b9;
+  border-color: var(--color-primary);
   outline: none;
 }
 
@@ -1219,7 +1290,7 @@ onMounted(async () => {
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
   cursor: pointer;
   transition: transform 0.3s, box-shadow 0.3s;
-  border: 1px solid #f0f0f0;
+  border: 1px solid var(--paper-2);
 }
 
 .case-card:hover {
@@ -1228,11 +1299,11 @@ onMounted(async () => {
 }
 
 .demand-side-card {
-  border-left: 6px solid #2980b9;
+  border-left: 6px solid var(--color-primary);
 }
 
 .supply-side-card {
-  border-left: 6px solid #27ae60;
+  border-left: 6px solid var(--el-color-success);
 }
 
 .card-body {
@@ -1255,25 +1326,25 @@ onMounted(async () => {
 }
 
 .tag-demand {
-  background: #2980b922;
-  color: #2980b9;
+  background: var(--color-primary)22;
+  color: var(--color-primary);
 }
 
 .tag-supply {
-  background: #27ae6022;
-  color: #27ae60;
+  background: var(--el-color-success)22;
+  color: var(--el-color-success);
 }
 
 .card-id {
   font-size: 0.8rem;
-  color: #aaa;
+  color: var(--ink-3);
   font-weight: 500;
 }
 
 .card-title {
   font-size: 1.1rem;
   font-weight: 700;
-  color: #333;
+  color: var(--ink);
   margin-bottom: 10px;
   line-height: 1.4;
 }
@@ -1287,7 +1358,7 @@ onMounted(async () => {
 
 .meta-item {
   font-size: 0.85rem;
-  color: #777;
+  color: var(--ink-3);
   display: flex;
   align-items: center;
   gap: 5px;
@@ -1295,7 +1366,7 @@ onMounted(async () => {
 
 .card-highlight {
   font-size: 0.9rem;
-  color: #555;
+  color: var(--ink-2);
   line-height: 1.6;
   margin-bottom: 10px;
 }
@@ -1312,12 +1383,12 @@ onMounted(async () => {
   justify-content: space-between;
   align-items: center;
   padding-top: 10px;
-  border-top: 1px solid #f0f0f0;
+  border-top: 1px solid var(--paper-2);
 }
 
 .view-detail {
   font-size: 0.85rem;
-  color: #2980b9;
+  color: var(--color-primary);
   font-weight: 600;
   display: flex;
   align-items: center;
@@ -1332,7 +1403,7 @@ onMounted(async () => {
 .no-data-icon {
   font-size: 3rem;
   margin-bottom: 15px;
-  color: #ddd;
+  color: var(--rule);
 }
 
 /* ---------- 详情弹窗 ---------- */
@@ -1370,13 +1441,13 @@ onMounted(async () => {
   border-radius: 50%;
   cursor: pointer;
   font-size: 1.1rem;
-  color: #666;
+  color: var(--ink-2);
   transition: all 0.3s;
   z-index: 1;
 }
 
 .modal-close:hover {
-  background: #2980b9;
+  background: var(--color-primary);
   color: white;
 }
 
@@ -1387,7 +1458,7 @@ onMounted(async () => {
 .modal-title {
   font-size: 1.6rem;
   font-weight: 700;
-  color: #333;
+  color: var(--ink);
   margin-bottom: 12px;
   line-height: 1.4;
 }
@@ -1403,8 +1474,8 @@ onMounted(async () => {
   border-radius: 14px;
   font-size: 0.82rem;
   font-weight: 600;
-  background: #2980b922;
-  color: #2980b9;
+  background: var(--color-primary)22;
+  color: var(--color-primary);
 }
 
 .modal-grid {
@@ -1416,7 +1487,7 @@ onMounted(async () => {
 
 .modal-field label {
   font-size: 0.82rem;
-  color: #999;
+  color: var(--ink-3);
   font-weight: 600;
   display: block;
   margin-bottom: 4px;
@@ -1424,7 +1495,7 @@ onMounted(async () => {
 
 .modal-field p {
   font-size: 0.95rem;
-  color: #333;
+  color: var(--ink);
   line-height: 1.5;
 }
 
@@ -1435,20 +1506,20 @@ onMounted(async () => {
 .modal-section h4 {
   font-size: 1rem;
   font-weight: 700;
-  color: #2980b9;
+  color: var(--color-primary);
   margin-bottom: 6px;
   padding-bottom: 4px;
-  border-bottom: 2px solid #2980b933;
+  border-bottom: 2px solid var(--color-primary)33;
 }
 
 .modal-section p {
   font-size: 0.92rem;
-  color: #444;
+  color: var(--ink-2);
   line-height: 1.7;
 }
 
 .source-link {
-  color: #3498db;
+  color: var(--color-primary);
   font-size: 0.88rem;
   word-break: break-all;
 }
@@ -1465,46 +1536,46 @@ onMounted(async () => {
 
 /* ---------- 边疆需求/内地供给 卡片样式 ---------- */
 .border-demand-card {
-  border-left: 6px solid #2980b9;
+  border-left: 6px solid var(--color-primary);
 }
 
 .supply-demand-card {
-  border-left: 6px solid #27ae60;
+  border-left: 6px solid var(--el-color-success);
 }
 
 .card-id {
   font-size: 0.8rem;
-  color: #aaa;
+  color: var(--ink-3);
   font-weight: 500;
   margin-left: auto;
 }
 
 .bd-stage-tag {
-  background-color: #e8f4fd;
-  color: #1a5276;
+  background-color: var(--color-primary-light);
+  color: var(--color-primary-dark);
 }
 
 .ms-type-tag {
-  background-color: #e8f8e8;
-  color: #1b7d1b;
+  background-color: rgba(47,107,79,.08);
+  color: #2f6b4f;
 }
 
 .detail-block {
   margin-bottom: 14px;
   padding: 12px 16px;
-  background-color: #f8f9fa;
+  background-color: var(--paper-2);
   border-radius: 8px;
-  border-left: 4px solid #2980b9;
+  border-left: 4px solid var(--color-primary);
 }
 
 .supply-demand-card .detail-block {
-  border-left-color: #27ae60;
+  border-left-color: var(--el-color-success);
 }
 
 .detail-block-label {
   font-size: 0.88rem;
   font-weight: 600;
-  color: #2c3e50;
+  color: var(--ink);
   margin-bottom: 6px;
   display: flex;
   align-items: center;
@@ -1512,27 +1583,27 @@ onMounted(async () => {
 }
 
 .detail-block-label i {
-  color: #2980b9;
+  color: var(--color-primary);
 }
 
 .supply-demand-card .detail-block-label i {
-  color: #27ae60;
+  color: var(--el-color-success);
 }
 
 .detail-block-content {
   font-size: 0.9rem;
-  color: #555;
+  color: var(--ink-2);
   line-height: 1.6;
 }
 
 .supply-cat-btn.active {
-  background-color: #27ae60;
-  border-color: #27ae60;
+  background-color: var(--el-color-success);
+  border-color: var(--el-color-success);
   color: white;
 }
 
 .supply-contact-btn {
-  background: linear-gradient(135deg, #1b7d1b 0%, #27ae60 100%) !important;
+  background: linear-gradient(135deg, #2f6b4f 0%, var(--el-color-success) 100%) !important;
   box-shadow: 0 5px 15px rgba(39, 174, 96, 0.3) !important;
 }
 
@@ -1567,7 +1638,7 @@ onMounted(async () => {
 }
 
 .match-btn {
-  background: linear-gradient(135deg, #6a1b9a 0%, #8e24aa 100%);
+  background: linear-gradient(135deg, var(--talent) 0%, var(--talent) 100%);
   color: white;
   border: none;
   padding: 12px 24px;
@@ -1589,7 +1660,7 @@ onMounted(async () => {
 }
 
 .match-demand-btn {
-  background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
+  background: linear-gradient(135deg, #245a3d 0%, #2f6b4f 100%);
   box-shadow: 0 5px 15px rgba(46, 125, 50, 0.3);
 }
 
@@ -1608,30 +1679,30 @@ onMounted(async () => {
 }
 
 .matching-loading p {
-  color: #555;
+  color: var(--ink-2);
   font-size: 1.1rem;
   margin-top: 15px;
 }
 
 .matching-loading .matching-subtitle {
-  color: #999;
+  color: var(--ink-3);
   font-size: 0.95rem;
   margin-top: 8px;
 }
 
 .matching-title-icon {
-  color: #8e24aa;
+  color: var(--talent);
   margin-right: 8px;
 }
 
 .matching-source {
-  color: #666;
+  color: var(--ink-2);
   font-size: 0.95rem;
   margin-bottom: 20px;
   padding: 10px 16px;
-  background: #f5f0fa;
+  background: var(--talent-bg);
   border-radius: 8px;
-  border-left: 4px solid #8e24aa;
+  border-left: 4px solid var(--talent);
 }
 
 .matching-summary {
@@ -1640,13 +1711,13 @@ onMounted(async () => {
   margin-bottom: 25px;
   flex-wrap: wrap;
   padding: 12px 16px;
-  background: #f0f4f8;
+  background: var(--paper-2);
   border-radius: 10px;
 }
 
 .match-summary-item {
   font-size: 0.9rem;
-  color: #2c3e50;
+  color: var(--ink);
   display: flex;
   align-items: center;
   gap: 6px;
@@ -1654,7 +1725,7 @@ onMounted(async () => {
 }
 
 .match-summary-item i {
-  color: #2980b9;
+  color: var(--color-primary);
 }
 
 .match-results {
@@ -1667,9 +1738,9 @@ onMounted(async () => {
   display: flex;
   gap: 16px;
   padding: 18px;
-  background: #f8f9fa;
+  background: var(--paper-2);
   border-radius: 12px;
-  border-left: 5px solid #8e24aa;
+  border-left: 5px solid var(--talent);
   transition: box-shadow 0.3s, transform 0.3s;
 }
 
@@ -1679,11 +1750,11 @@ onMounted(async () => {
 }
 
 .match-supply-card {
-  border-left-color: #8e24aa;
+  border-left-color: var(--talent);
 }
 
 .match-demand-card {
-  border-left-color: #27ae60;
+  border-left-color: var(--el-color-success);
 }
 
 .match-rank {
@@ -1691,7 +1762,7 @@ onMounted(async () => {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #8e24aa, #ba2cd0);
+  background: linear-gradient(135deg, var(--talent), var(--talent));
   color: white;
   font-weight: 700;
   font-size: 0.9rem;
@@ -1701,7 +1772,7 @@ onMounted(async () => {
 }
 
 .match-demand-card .match-rank {
-  background: linear-gradient(135deg, #1b5e20, #2e7d32);
+  background: linear-gradient(135deg, #245a3d, #2f6b4f);
 }
 
 .match-card-body {
@@ -1712,7 +1783,7 @@ onMounted(async () => {
 .match-card-title {
   font-size: 1.05rem;
   font-weight: 700;
-  color: #1a5276;
+  color: var(--color-primary-dark);
   margin-bottom: 8px;
   line-height: 1.4;
 }
@@ -1726,19 +1797,19 @@ onMounted(async () => {
 
 .match-meta-item {
   font-size: 0.82rem;
-  color: #777;
+  color: var(--ink-3);
   display: flex;
   align-items: center;
   gap: 5px;
 }
 
 .match-meta-item i {
-  color: #aaa;
+  color: var(--ink-3);
 }
 
 .match-card-desc {
   font-size: 0.88rem;
-  color: #555;
+  color: var(--ink-2);
   line-height: 1.6;
   margin-bottom: 10px;
 }
@@ -1754,38 +1825,38 @@ onMounted(async () => {
   border-radius: 12px;
   font-size: 0.78rem;
   font-weight: 600;
-  background: #f0f0f0;
-  color: #666;
+  background: var(--paper-2);
+  color: var(--ink-2);
 }
 
 .score-badge.total {
-  background: #8e24aa22;
-  color: #8e24aa;
+  background: var(--talent)22;
+  color: var(--talent);
   font-weight: 700;
 }
 
 .match-demand-card .score-badge.total {
-  background: #27ae6022;
-  color: #27ae60;
+  background: var(--el-color-success)22;
+  color: var(--el-color-success);
 }
 
 .no-match-result {
   text-align: center;
   padding: 50px 20px;
-  color: #999;
+  color: var(--ink-3);
 }
 
 .no-match-result i {
   font-size: 2.5rem;
   margin-bottom: 15px;
-  color: #ddd;
+  color: var(--rule);
 }
 
 .error-message {
-  color: #c0392b;
+  color: var(--color-accent);
   font-size: 1rem;
   padding: 20px;
-  background: #ffebee;
+  background: var(--color-accent-light);
   border-radius: 8px;
   text-align: center;
 }
@@ -1811,4 +1882,62 @@ onMounted(async () => {
     align-self: flex-start;
   }
 }
+</style>
+
+<style scoped>
+/* ===== v2 三级漏斗 · 编辑风 ===== */
+.v2-badge { color: var(--color-primary); }
+.v2-badge.llm { color: #fff; background: var(--color-primary); font-weight: 650; padding: 3px 12px; border-radius: 3px; letter-spacing: 1px; }
+.score-badge.v2-tag.talent { background: var(--talent-bg); color: var(--talent); border-color: rgba(109,76,159,.35); }
+.score-badge.v2-tag.enterprise { background: rgba(30,58,110,.05); color: var(--color-primary); border-color: rgba(30,58,110,.3); }
+
+.llm-judge {
+  margin-top: 12px;
+  padding: 12px 15px;
+  background: var(--paper-2);
+  border: none;
+  border-left: 2px solid var(--color-primary);
+  border-radius: 0 4px 4px 0;
+}
+.llm-judge .llm-row {
+  margin: 5px 0;
+  font-size: 12.8px;
+  line-height: 1.8;
+  color: var(--ink-2);
+}
+.llm-judge .llm-row strong {
+  display: inline-block;
+  margin-right: 10px;
+  color: var(--color-primary);
+  min-width: 78px;
+  font-weight: 650;
+}
+.llm-judge .llm-row strong i { margin-right: 4px; }
+
+.history-reference {
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px dashed var(--rule);
+}
+.hr-title {
+  font-family: var(--font-serif);
+  font-size: 13.5px;
+  letter-spacing: 2px;
+  color: var(--ink);
+  margin-bottom: 12px;
+  font-weight: 700;
+}
+.hr-title i { color: var(--color-accent); margin-right: 6px; }
+.hr-card {
+  padding: 10px 14px;
+  margin-bottom: 8px;
+  background: var(--color-bg-card);
+  border-radius: 3px;
+  border: 1px solid var(--color-border);
+  border-left: 2px solid rgba(163,58,42,.35);
+  transition: transform 0.3s var(--ease-out), border-color 0.25s;
+}
+.hr-card:hover { transform: translateX(4px); border-left-color: var(--color-accent); }
+.hr-card .hr-name { font-size: 13px; font-weight: 650; color: var(--ink); margin-bottom: 3px; }
+.hr-card .hr-meta { font-size: 12px; color: var(--ink-3); line-height: 1.7; }
 </style>

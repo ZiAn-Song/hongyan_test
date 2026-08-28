@@ -16,6 +16,25 @@
         </div>
       </header>
 
+
+      <!-- 实践纪实 · 团队图集（真实调研素材） -->
+      <section class="fieldwork">
+        <div class="fw-head">
+          <p class="fw-kicker">实践纪实 · 万里边疆 强国有我</p>
+          <h2 class="fw-title">山东大学赴边疆社会实践图集</h2>
+          <p class="fw-lede">以下 {{ fieldworkTotal }} 张照片均为实践团队真实调研影像，按主题归档——从"万里边疆 强国有我"启动授旗，到赴疆推普、支教课堂、医疗义诊与产业一线，图文一一对应。</p>
+        </div>
+        <div v-for="g in fieldworkGroups" :key="g.theme" class="fw-group">
+          <h3 class="fw-group-h">{{ g.theme }}<span class="fw-count">{{ g.items.length }}</span></h3>
+          <div class="fw-grid">
+            <figure v-for="it in g.items" :key="it.src" class="fw-item" @click="openPhoto(it)">
+              <img :src="it.src" :alt="it.caption" loading="lazy" />
+              <figcaption class="fw-cap">{{ it.caption }}</figcaption>
+            </figure>
+          </div>
+        </div>
+      </section>
+
       <div class="content-wrapper">
         <div class="toolbar">
           <div class="search-box">
@@ -85,6 +104,18 @@
         </div>
       </div>
     </div>
+
+
+    <!-- Photo Lightbox -->
+    <transition name="modal">
+      <div v-if="photo" class="photo-overlay" @click.self="photo = null">
+        <button class="modal-close photo-close" @click="photo = null"><i class="fas fa-times"></i></button>
+        <figure class="photo-body">
+          <img :src="photo.src" :alt="photo.caption" />
+          <figcaption><span class="photo-theme">{{ photo.theme }}</span>{{ photo.caption }}</figcaption>
+        </figure>
+      </div>
+    </transition>
 
     <!-- Detail Modal -->
     <transition name="modal">
@@ -215,6 +246,74 @@ onMounted(async () => {
     loading.value = false
   }
 })
+
+/* ---------- 实践纪实图集（真实调研素材，按主题归档；2026-08-27 全部经读图逐张核对） ---------- */
+const A = '/img/achievements'
+const fieldworkGroups = [
+  {
+    theme: '项目启动',
+    items: [
+      { src: `${A}/图片16.png`, theme: '项目启动', caption: '「万里边疆 强国有我」社会实践育人工程启动会议（2025年7月8日），山东大学边疆研究院部署年度赴边疆实践；云南研究院授旗，「滇忆云桥」中队出征' },
+    ],
+  },
+  {
+    theme: '研究院团队纪实',
+    items: [
+      { src: `${A}/图片5.png`, theme: '团队纪实', caption: '山东大学「豪外听鸿」赴边疆研究院征实践团队在「为天下储人才，为国家图富强」校训墙前整装出征' },
+      { src: `${A}/图片2.png`, theme: '思政育人', caption: '「万里边疆 青春强国行」多线并进：经济学院「疆山河」中队赴和田、兵团团场学习传承兵团精神，并在疏附县托克扎克镇中心小学开展思政育人调研' },
+    ],
+  },
+  {
+    theme: '赴疆调研 · 铸牢共同体',
+    items: [
+      { src: `${A}/图片3.png`, theme: '生态兴边', caption: '「疆山河行」赴边疆生态兴边调研实践团在伊犁特克斯县库什台村，与村党支部围绕生态保护与兴边富民座谈' },
+      { src: `${A}/图片8.png`, theme: '民族团结', caption: '铸牢中华民族共同体意识实践团在兵团第六师奇台农场民族团结教育基地，学习「中华民族一家亲，同心共筑中国梦」主题展陈' },
+      { src: `${A}/图片14.png`, theme: '屯垦戍边', caption: '青鸾海疆实践队在奇台民兵连纪念碑前，访谈军垦后代、记录民兵连屯垦戍边口述史' },
+    ],
+  },
+  {
+    theme: '推普强国',
+    items: [
+      { src: `${A}/图片1.png`, theme: '推普强国', caption: '推普强国行实践队在喀什中亚南亚工业园党群服务中心，开展「普通话+就业场景」语言服务调研（对应成果档案条目53）' },
+      { src: `${A}/图片18.png`, theme: '推普课堂', caption: '推普课堂上，孩子们展示毛笔书写的国家通用语言文字——「各民族要像石榴籽一样紧紧抱在一起」' },
+    ],
+  },
+  {
+    theme: '教育帮扶与支教',
+    items: [
+      { src: `${A}/图片10.png`, theme: '技能培训调研', caption: '在疏附县技工学校座谈（「知识改变命运、技能成就未来」），调研职业技能培训与国家通用语言文字推广' },
+      { src: `${A}/图片12.png`, theme: '支教课堂', caption: '「华夏彩课堂」中华优秀传统文化进校园：漆扇书签、绒花制作、经典诵读、纸艺拼贴等九大课程板块' },
+      { src: `${A}/图片11.png`, theme: '教研交流', caption: '中华优秀传统文化进课堂与教研交流：实践团与当地教师围绕课程设计联合备课' },
+    ],
+  },
+  {
+    theme: '产业与科技调研',
+    items: [
+      { src: `${A}/图片17.png`, theme: '产业调研', caption: '产业一线走访：生物发酵车间、洁净生产间、智能展示厅与工业设备区，记录东西部协作产业园的技术转化场景' },
+      { src: `${A}/图片15.png`, theme: '科技兴农', caption: '农林植保无人机与农机装备调研，了解智能装备在边疆特色农业中的应用' },
+      { src: `${A}/图片7.png`, theme: '基建能源', caption: '山东大学通麦驻地：实践团在川藏交通与能源建设一线，调研重大工程建设与运维' },
+      { src: `${A}/图片4.png`, theme: '规划调研', caption: '在城市规划馆聆听讲解，系统了解受援地发展脉络与对口支援项目布局' },
+    ],
+  },
+  {
+    theme: '医疗义诊',
+    items: [
+      { src: `${A}/图片6.png`, theme: '医疗义诊', caption: '山东大学齐鲁医院硕博医师团边疆义诊现场，专家为群众提供基层医疗服务' },
+    ],
+  },
+  {
+    theme: '文化交融',
+    items: [
+      { src: `${A}/图片13.png`, theme: '文化调研', caption: '暖城新声社会实践队在鄂尔多斯青铜器博物馆，调研北疆文化保护与传播' },
+      { src: `${A}/图片9.png`, theme: '高原调研', caption: '山东大学药学院蓉城同道实践团赴西藏，开展高原医药与健康调研' },
+      { src: `${A}/图片19.png`, theme: '座谈交流', caption: '实践团与当地政府部门、园区企业多场座谈（中新社山东报道）' },
+    ],
+  },
+]
+const fieldworkTotal = fieldworkGroups.reduce((n, g) => n + g.items.length, 0)
+const photo = ref(null)
+const openPhoto = (it) => { photo.value = it }
+
 </script>
 
 <style scoped>
@@ -223,7 +322,7 @@ onMounted(async () => {
 }
 
 .page-banner {
-  background: linear-gradient(135deg, #c0392b 0%, #e74c3c 50%, #c0392b 100%);
+  background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent) 50%, var(--color-accent) 100%);
   color: white;
   padding: 60px 5% 40px;
   text-align: center;
@@ -324,20 +423,20 @@ onMounted(async () => {
 
 .tab-btn.active {
   background: white;
-  color: #c0392b;
+  color: var(--color-accent);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
 }
 
 .tab-count {
-  background: #e74c3c22;
-  color: #c0392b;
+  background: var(--color-accent)22;
+  color: var(--color-accent);
   padding: 2px 8px;
   border-radius: 10px;
   font-size: 0.8rem;
 }
 
 .tab-btn.active .tab-count {
-  background: #c0392b;
+  background: var(--color-accent);
   color: white;
 }
 
@@ -372,7 +471,7 @@ onMounted(async () => {
 }
 
 .search-input:focus {
-  border-color: #e74c3c;
+  border-color: var(--color-accent);
   outline: none;
 }
 
@@ -387,7 +486,7 @@ onMounted(async () => {
 }
 
 .filter-select:focus {
-  border-color: #e74c3c;
+  border-color: var(--color-accent);
   outline: none;
 }
 
@@ -399,7 +498,7 @@ onMounted(async () => {
 
 .spinner {
   border: 4px solid #f3f3f3;
-  border-top: 4px solid #c0392b;
+  border-top: 4px solid var(--color-accent);
   border-radius: 50%;
   width: 50px;
   height: 50px;
@@ -478,7 +577,7 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  background: linear-gradient(135deg, var(--paper-2), #e9ecef);
   color: #ccc;
   font-size: 2rem;
 }
@@ -496,20 +595,20 @@ onMounted(async () => {
   border-radius: 12px;
   font-size: 0.78rem;
   font-weight: 600;
-  background: #e74c3c22;
-  color: #c0392b;
+  background: var(--color-accent)22;
+  color: var(--color-accent);
   margin-bottom: 8px;
   align-self: flex-start;
 }
 
 .tag-demand {
-  background: #2980b922;
-  color: #2980b9;
+  background: var(--color-primary)22;
+  color: var(--color-primary);
 }
 
 .tag-supply {
-  background: #27ae6022;
-  color: #27ae60;
+  background: var(--el-color-success)22;
+  color: var(--el-color-success);
 }
 
 .card-header-row {
@@ -585,7 +684,7 @@ onMounted(async () => {
 
 .view-detail {
   font-size: 0.85rem;
-  color: #c0392b;
+  color: var(--color-accent);
   font-weight: 600;
   display: flex;
   align-items: center;
@@ -616,8 +715,8 @@ onMounted(async () => {
 }
 
 .page-btn:hover:not(:disabled) {
-  border-color: #c0392b;
-  color: #c0392b;
+  border-color: var(--color-accent);
+  color: var(--color-accent);
 }
 
 .page-btn:disabled {
@@ -671,7 +770,7 @@ onMounted(async () => {
 }
 
 .modal-close:hover {
-  background: #e74c3c;
+  background: var(--color-accent);
   color: white;
 }
 
@@ -702,8 +801,8 @@ onMounted(async () => {
   border-radius: 14px;
   font-size: 0.82rem;
   font-weight: 600;
-  background: #e74c3c22;
-  color: #c0392b;
+  background: var(--color-accent)22;
+  color: var(--color-accent);
 }
 
 .modal-grid {
@@ -734,10 +833,10 @@ onMounted(async () => {
 .modal-section h4 {
   font-size: 1rem;
   font-weight: 700;
-  color: #c0392b;
+  color: var(--color-accent);
   margin-bottom: 6px;
   padding-bottom: 4px;
-  border-bottom: 2px solid #e74c3c33;
+  border-bottom: 2px solid var(--color-accent)33;
 }
 
 .modal-section p {
@@ -747,7 +846,7 @@ onMounted(async () => {
 }
 
 .source-link {
-  color: #3498db;
+  color: var(--color-primary);
   font-size: 0.88rem;
   word-break: break-all;
 }
@@ -806,5 +905,120 @@ onMounted(async () => {
   .modal-container {
     padding: 20px;
   }
+}
+</style>
+
+<style scoped>
+/* ===== 实践纪实 · 编辑风图集 ===== */
+.fieldwork {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 46px 4% 8px;
+  border-bottom: 1px solid var(--rule);
+}
+.fw-kicker {
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: var(--color-accent);
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+.fw-title {
+  font-family: var(--font-serif);
+  font-size: clamp(21px, 3vw, 27px);
+  color: var(--ink);
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+}
+.fw-lede {
+  font-size: 13px;
+  color: var(--ink-3);
+  line-height: 1.9;
+  max-width: 680px;
+  margin-bottom: 30px;
+}
+
+.fw-group { margin-bottom: 30px; }
+.fw-group-h {
+  font-size: 13px;
+  letter-spacing: 2.5px;
+  color: var(--ink);
+  font-weight: 650;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.fw-count {
+  font-family: Georgia, var(--font-mono);
+  font-size: 12px;
+  color: var(--ink-3);
+  font-weight: 400;
+}
+
+.fw-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 18px;
+}
+.fw-item {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  cursor: zoom-in;
+  transition: transform 0.3s var(--ease-out), box-shadow 0.3s var(--ease-out);
+}
+.fw-item:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+.fw-item img {
+  width: 100%;
+  height: 170px;
+  object-fit: cover;
+  display: block;
+}
+.fw-cap {
+  padding: 10px 12px 12px;
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--ink-2);
+  border-top: 1px solid var(--color-border);
+}
+
+/* 灯箱 */
+.photo-overlay {
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(20, 18, 15, 0.88);
+  display: flex; align-items: center; justify-content: center;
+  padding: 40px 24px;
+}
+.photo-close { position: absolute; top: 22px; right: 26px; color: #fff; background: none; border: none; font-size: 20px; cursor: pointer; }
+.photo-body { max-width: min(920px, 92vw); }
+.photo-body img {
+  max-width: 100%; max-height: 74vh;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 24px 60px rgba(0,0,0,.5);
+}
+.photo-body figcaption {
+  margin-top: 14px;
+  font-size: 13px;
+  line-height: 1.8;
+  color: rgba(255,255,255,.88);
+}
+.photo-theme {
+  display: inline-block;
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: #e8d9b8;
+  border: 1px solid rgba(232,217,184,.4);
+  border-radius: 2px;
+  padding: 1px 8px;
+  margin-right: 10px;
+  vertical-align: 1px;
 }
 </style>
