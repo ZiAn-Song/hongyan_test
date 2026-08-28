@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: hongyan-backend
+    env: python
+    region: singapore
+    rootDir: 鸿雁/backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /docs
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.13.0
+      - key: SECRET_KEY
+        generateValue: true
+      - key: CORS_ORIGINS
+        value: '["https://hongyan-3kr.pages.dev"]'
+      - key: APPBUILDER_TOKEN
+        sync: false
+      - key: APPBUILDER_APP_ID
+        sync: false
