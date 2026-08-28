@@ -1,6 +1,0 @@
-export { registerPersonal, registerEnterprise, login, getMe } from './auth'
-export { listTeams, getTeam, createTeam } from './teams'
-export { listDemands, getDemand, createDemand } from './demands'
-export { listPosts, getPost, createPost, createComment } from './forum'
-export { chat, searchContent, indexContent } from './ai'
-export { default as request } from './request'
