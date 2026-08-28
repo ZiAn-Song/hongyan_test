@@ -59,3 +59,50 @@ def match_v2(
     if not result["demand"]:
         raise HTTPException(status_code=404, detail=f"需求 {demand_id} 不存在")
     return result
+
+
+# ================= v2 双向自由对接（真实使用逻辑）=================
+from pydantic import BaseModel as _BaseModel
+
+
+class FreeMatchRequest(_BaseModel):
+    text: str
+    top_k: int = 8
+    use_llm: bool = True
+
+
+@router.post("/v2/freestyle")
+def freestyle_match(body: FreeMatchRequest, db: Session = Depends(get_db)):
+    """需求方路径：自由描述需求 → DeepSeek 解析 → 三级漏斗匹配资源库"""
+    if not body.text.strip():
+        raise HTTPException(status_code=400, detail="需求描述不能为空")
+    from app.services.matching_service import match_freetext_for_demand
+    return match_freetext_for_demand(db, body.text.strip(),
+                                     top_k=body.top_k, use_llm=body.use_llm)
+
+
+@router.post("/v2/reverse")
+def reverse_match(body: FreeMatchRequest, db: Session = Depends(get_db)):
+    """供给方路径：输入能力画像 → 反向匹配边疆需求库 + 历史范式"""
+    if not body.text.strip():
+        raise HTTPException(status_code=400, detail="能力画像不能为空")
+    from app.services.matching_service import match_profile_for_demands
+    return match_profile_for_demands(db, body.text.strip(),
+                                     top_k=body.top_k, use_llm=body.use_llm)
+
+
+@router.get("/border-demands")
+def list_border_demands(province: str | None = None,
+                        db: Session = Depends(get_db)):
+    """边疆需求轻量列表（地图可视化用）：点击省份返回该省需求。"""
+    from app.models.achievement import BorderDemand
+    from sqlalchemy import select as _select
+    q = db.execute(
+        _select(BorderDemand).where(BorderDemand.demand_id != None)  # noqa: E711
+    ).scalars().all()
+    items = [{
+        "demand_id": d.demand_id, "title": d.title, "province": d.province,
+        "stage": d.stage, "supply_tags": d.supply_tags,
+        "pain_point": (d.pain_point or d.description or "")[:120],
+    } for d in q if (not province or (d.province and province in d.province))]
+    return {"items": items, "total": len(items)}

@@ -75,6 +75,12 @@ const routes = [
     meta: { title: '边疆资讯 - 鸿雁' }
   },
   {
+    path: '/contact',
+    name: 'contact',
+    component: () => import('@/views/ContactCenterView.vue'),
+    meta: { title: '对接中心 - 鸿雁', requiresAuth: true }
+  },
+  {
     path: '/comprehensive',
     name: 'comprehensive',
     component: () => import('@/views/ComprehensiveView.vue'),

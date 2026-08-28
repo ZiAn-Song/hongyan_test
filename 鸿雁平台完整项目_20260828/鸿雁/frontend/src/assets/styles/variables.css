@@ -1,0 +1,67 @@
+/* ============================================================
+   鸿雁平台 · 编辑排版风设计令牌（Editorial Design Tokens）
+   暖纸白 + 墨色 + 墨水蓝 + 印章红点缀；宋体标题驱动层次
+   ============================================================ */
+:root {
+  /* —— 编辑风核心色板 —— */
+  --ink: #1c1917;            /* 墨 */
+  --ink-2: #44403c;
+  --ink-3: #78716c;
+  --paper: #faf9f5;          /* 暖纸白 */
+  --paper-2: #f3f1ea;
+  --rule: #d6d0c4;           /* 分隔线 */
+
+  /* —— 主题色（沿用旧变量名，全局换值）—— */
+  --color-primary: #1e3a6e;               /* 墨水蓝主色 */
+  --color-primary-dark: #16305c;
+  --color-primary-darker: #0f2447;
+  --color-primary-light: rgba(30, 58, 110, 0.08);
+
+  /* —— 辅助色 —— */
+  --color-accent: #a33a2a;                /* 印章红点缀 */
+  --color-accent-dark: #7d2c20;
+  --color-accent-light: rgba(163, 58, 42, 0.06);
+  --color-link: #1e3a6e;
+
+  --talent: #6d4c9f;                      /* 山大人才紫（低饱和） */
+  --talent-bg: rgba(109, 76, 159, 0.05);
+
+  /* —— 中性色 —— */
+  --color-bg: #faf9f5;
+  --color-bg-alt: #f3f1ea;
+  --color-bg-card: #ffffff;
+  --color-border: #e5e0d5;
+  --color-text: #1c1917;
+  --color-text-light: #44403c;
+  --color-text-muted: #78716c;
+
+  /* —— 字体 —— */
+  --font-family: 'PingFang SC', 'Microsoft YaHei', -apple-system, sans-serif;
+  --font-serif: 'Songti SC', 'STSong', 'Noto Serif SC', 'SimSun', serif;
+  --font-mono: 'SF Mono', ui-monospace, 'Menlo', monospace;
+
+  /* —— 间距 —— */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 40px;
+
+  /* —— 圆角（编辑风收紧）—— */
+  --radius-sm: 4px;
+  --radius-md: 7px;
+  --radius-lg: 10px;
+  --radius-pill: 99px;
+
+  /* —— 阴影（收敛、偏冷灰）—— */
+  --shadow-sm: 0 1px 2px rgba(28, 25, 23, 0.05);
+  --shadow-md: 0 2px 10px rgba(28, 25, 23, 0.07);
+  --shadow-lg: 0 14px 36px -12px rgba(28, 25, 23, 0.16);
+
+  /* —— 动效（ease-out-quart，无弹性）—— */
+  --ease-out: cubic-bezier(0.25, 1, 0.5, 1);
+
+  /* —— 布局 —— */
+  --header-height: 118px;
+  --max-width: 1240px;
+}

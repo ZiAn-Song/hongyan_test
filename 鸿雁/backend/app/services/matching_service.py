@@ -373,7 +373,7 @@ def find_reference_achievements(db: Session, demand: BorderDemand,
     return scored[:top_n]
 
 
-def match_all_for_demand(db: Session, demand_id: str, top_k: int = 8,
+def match_all_for_demand(db: Session, demand_id, top_k: int = 8,
                          use_llm: bool = True, subject_type: str | None = None) -> dict:
     """三级漏斗完整匹配（跨类型统一排序版）
 
@@ -381,10 +381,15 @@ def match_all_for_demand(db: Session, demand_id: str, top_k: int = 8,
     第二级：关键词打分 + 标签匹配加权 × 三因子动态可信度 → 排序取 Top-K
     第三级：DeepSeek 大模型研判（评分+理由+风险+建议），失败自动降级规则模式
     附：历史范式参考（已完成成果的可复制协作点）
+
+    demand_id 支持两种入参：需求ID 字符串（库内需求）或已构造好的需求对象（自由文本路径）。
     """
-    demand = db.query(BorderDemand).filter(BorderDemand.demand_id == demand_id).first()
-    if not demand:
-        return {"demand": None, "matches": [], "total": 0}
+    if isinstance(demand_id, str):
+        demand = db.query(BorderDemand).filter(BorderDemand.demand_id == demand_id).first()
+        if not demand:
+            return {"demand": None, "matches": [], "total": 0}
+    else:
+        demand = demand_id
 
     # --- 向量索引装载（无向量时自动降级为纯关键词+标签）---
     emb_map = {}
@@ -393,7 +398,10 @@ def match_all_for_demand(db: Session, demand_id: str, top_k: int = 8,
             emb_map[(e.source_type, e.source_id)] = json.loads(e.embedding)
         except json.JSONDecodeError:
             continue
-    demand_vec = emb_map.get(('demand', demand.demand_id))
+    demand_vec = emb_map.get(('demand', getattr(demand, 'demand_id', None)))
+    if demand_vec is None and getattr(demand, 'description', None):
+        from app.services.embedding_service import embed_text
+        demand_vec = embed_text(_build_demand_text(demand))
 
     def _vec_sim(source_type: str, source_id: str) -> float:
         if not demand_vec:
@@ -470,3 +478,229 @@ def match_all_for_demand(db: Session, demand_id: str, top_k: int = 8,
                         "returned": len(top), "judge_mode": judge_mode},
         "history_reference": references,
     }
+
+
+# ============================================================
+# 双向自由对接（真实使用逻辑）：
+#   需求方 → 自由描述需求 → 匹配已有资源   (match_freetext_for_demand)
+#   供给方 → 输入能力画像  → 反向匹配需求   (match_profile_for_demands)
+# ============================================================
+from app.services.embedding_service import embed_text
+
+emb_map_global: dict = {}   # (source_type, source_id) -> 向量；惰性加载
+
+
+def _load_emb_map(db) -> dict:
+    if not emb_map_global:
+        for e in db.query(ResourceEmbedding).all():
+            try:
+                emb_map_global[(e.source_type, e.source_id)] = json.loads(e.embedding)
+            except json.JSONDecodeError:
+                continue
+    return emb_map_global
+
+
+PARSE_PROMPT = """你是东西部协作供需匹配平台的需求分析引擎。把口语化的边疆需求解析为结构化对象。
+
+输出 JSON：
+{{
+  "region": "省/自治区，如 新疆/甘肃/西藏/内蒙古/云南，没有则 null",
+  "domain": "领域，如 农业/能源/产业升级/文旅/教育/医疗/生态/数字经济，没有则 null",
+  "problem": "核心问题一句话摘要",
+  "keywords": ["用于资源库检索的关键词数组，3-6个核心名词，如 红枣、深加工、光伏、旅游、人才"],
+  "resource_type": "所需资源类型数组，如 [技术,人才,资金,生产线,销售渠道]"
+}}
+只输出 JSON。
+
+需求：{text}"""
+
+
+def rule_parse(text: str) -> dict:
+    """无 LLM 时的关键词兜底解析"""
+    region_map = {"新疆": "新疆", "喀什": "新疆", "和田": "新疆", "伊犁": "新疆", "阿克苏": "新疆",
+                  "甘肃": "甘肃", "西藏": "西藏", "内蒙古": "内蒙古", "云南": "云南",
+                  "青海": "青海", "宁夏": "宁夏", "广西": "广西", "贵州": "贵州"}
+    domain_map = {"红枣": "农业", "苹果": "农业", "种植": "农业", "畜牧": "农业", "加工": "产业升级",
+                  "光伏": "能源", "风电": "能源", "储能": "能源", "旅游": "文旅", "民宿": "文旅",
+                  "教育": "教育", "医疗": "医疗", "数据": "数字经济", "电商": "数字经济",
+                  "装备": "产业升级", "制造": "产业升级", "园区": "产业升级"}
+    region = next((v for k, v in region_map.items() if k in text), None)
+    domain = next((v for k, v in domain_map.items() if k in text), None)
+    kws = []
+    for w in ["红枣", "苹果", "深加工", "光伏", "储能", "旅游", "文旅", "民宿", "产业园区",
+              "种植", "畜牧", "装备", "制造", "人才", "培训", "技术", "资金", "销售渠道",
+              "电商", "物流", "医疗", "教育", "数字化", "乡村振兴", "对口支援"]:
+        if w in text and w not in kws:
+            kws.append(w)
+    return {"region": region, "domain": domain, "problem": text[:60],
+            "keywords": kws[:6], "resource_type": [], "_mode": "rule"}
+
+
+def parse_free_demand(text: str) -> dict:
+    """自由文本需求解析：DeepSeek 优先，规则兜底"""
+    result = call_llm_json(
+        [{"role": "user", "content": PARSE_PROMPT.format(text=text)}],
+        temperature=0.1)
+    if isinstance(result, dict) and result.get("keywords"):
+        result["_mode"] = "llm"
+        return result
+    return rule_parse(text)
+
+
+class FreestyleDemand:
+    """自由文本需求的轻量对象：属性与 BorderDemand 对齐，
+    可直接复用 match_all_for_demand / find_reference_achievements 全管线。"""
+
+    def __init__(self, text: str, parsed: dict):
+        self.demand_id = None                       # 无向量索引 → 走实时嵌入
+        self.title = parsed.get("problem") or text[:40]
+        self.province = parsed.get("region") or ""
+        self.pain_point = parsed.get("problem") or text[:100]
+        self.description = text
+        self.supply_tags = "、".join(parsed.get("resource_type") or [])
+        self.publisher = "自由需求"
+        self.coverage = ""
+        self.location_detail = ""
+        self.expected_goal = ""
+        self.stage = ""
+        self.contact = ""
+        self.source_level = ""
+        self.publish_date = ""
+        self.verification_status = ""
+        self.source_url = ""
+        self._parsed = parsed
+
+
+def match_freetext_for_demand(db: Session, text: str, top_k: int = 8,
+                              use_llm: bool = True) -> dict:
+    """需求方路径：自由描述需求 → 解析 → 三级漏斗匹配资源库（供给+人才）"""
+    parsed = parse_free_demand(text)
+    demand = FreestyleDemand(text, parsed)
+    result = match_all_for_demand(db, demand, top_k=top_k, use_llm=use_llm)
+    result["parsed_demand"] = parsed
+    result["mode"] = "freestyle"
+    return result
+
+
+def match_profile_for_demands(db: Session, text: str, top_k: int = 8,
+                              use_llm: bool = True) -> dict:
+    """供给方路径：输入能力画像 → 反向匹配边疆需求库 + 历史范式
+
+    评分 = (能力关键词命中 + 需求标签命中×3 + 12×向量余弦) × 需求可信度
+    向量：能力文本实时嵌入一次，与需求向量比对。
+    """
+    cap_vec = embed_text(text)
+    emb_map_global = _load_emb_map(db)
+    keywords = _extract_keywords(text)
+
+    scored = []
+    for d in db.query(BorderDemand).all():
+        dtext = _build_demand_text(d)
+        kw = _keyword_score(keywords, dtext)
+        tag = 0.0
+        if d.supply_tags:
+            for t in [x.strip() for x in re.split(r"[/、，,;；]+", d.supply_tags) if x.strip()]:
+                if t in text:
+                    tag += 3.0
+        vec = 0.0
+        if cap_vec:
+            dv = emb_map_global.get(("demand", d.demand_id))
+            if dv:
+                vec = cosine(cap_vec, dv)
+        base = kw + tag + VEC_W * vec
+        cred = credibility(d.source_level, d.publish_date, d.verification_status)
+        if base > 0:
+            dd = _demand_to_dict(d)
+            dd.update({"candidate_type": "demand", "score": round(base * cred["credibility"], 2),
+                       "keyword_score": round(kw, 2), "tag_score": round(tag, 2), **cred})
+            scored.append(dd)
+
+    scored.sort(key=lambda x: x["score"], reverse=True)
+    top = scored[:top_k]
+
+    if use_llm and top:
+        top, judge_mode = judge_reverse_with_llm(text, top)
+    else:
+        for c in top:
+            c["judge_mode"] = "off"
+            c["final_score"] = c["score"]
+        judge_mode = "off"
+
+    reference = _reference_by_text(db, text) if use_llm else []
+
+    return {"capability_text": text, "matches": top, "total": len(scored),
+            "filter_info": {"level1_candidates": db.query(BorderDemand).count(),
+                            "level2_matched": len(scored),
+                            "returned": len(top), "judge_mode": judge_mode},
+            "history_reference": reference, "mode": "reverse"}
+
+
+REVERSE_PROMPT = """你是东西部协作供需匹配引擎。供给方给出自己的能力画像，从候选边疆需求中评估"我能服务哪些需求"。
+
+供给方能力画像：
+{profile}
+
+候选边疆需求：
+{candidates}
+
+对每个候选需求评估供给方能否胜任，输出 JSON 数组：
+[{{"index":1,"match_score":0到100整数,"match_reason":"供给方哪项能力对应需求哪个痛点（引用双方实际内容）","risk":"对接风险或'无明显风险'","suggestion":"对接切入点建议"}}]
+
+规则：1. 高度胜任90+，部分胜任60-89，勉强相关40-59；2. match_reason 必须引用双方实际内容。
+只输出 JSON 数组。"""
+
+
+def judge_reverse_with_llm(profile: str, candidates: list[dict]) -> tuple[list[dict], str]:
+    """反向研判：DeepSeek 评估能力画像与需求的胜任关系（失败回退规则序）"""
+    cand_text = "\n".join(
+        f"[{i+1}] {c.get('title','')} | {c.get('province','')} | "
+        f"痛点: {str(c.get('pain_point',''))[:100]} | 需求: {str(c.get('description',''))[:100]} "
+        f"| 标签: {c.get('supply_tags','')}"
+        for i, c in enumerate(candidates))
+    result = call_llm_json(
+        [{"role": "user", "content": REVERSE_PROMPT.format(
+            profile=profile[:800], candidates=cand_text)}], temperature=0.2)
+    if isinstance(result, list) and result:
+        for j in result:
+            idx = int(j.get("index", 0)) - 1
+            if 0 <= idx < len(candidates):
+                candidates[idx]["llm_match_score"] = j.get("match_score")
+                candidates[idx]["llm_match_reason"] = j.get("match_reason")
+                candidates[idx]["llm_risk"] = j.get("risk")
+                candidates[idx]["llm_suggestion"] = j.get("suggestion")
+        max_orig = max((c["score"] for c in candidates), default=1) or 1
+        for c in candidates:
+            orig_norm = c["score"] / max_orig * 100
+            llm_s = c.get("llm_match_score")
+            if llm_s is not None:
+                try:
+                    c["final_score"] = round(0.7 * float(llm_s) + 0.3 * orig_norm, 1)
+                except (TypeError, ValueError):
+                    c["final_score"] = round(orig_norm, 1)
+            else:
+                c["final_score"] = round(orig_norm, 1)
+            c["judge_mode"] = "llm"
+        candidates.sort(key=lambda x: x.get("final_score", 0), reverse=True)
+        return candidates, "llm"
+    for c in candidates:
+        c["judge_mode"] = "rule"
+        c["final_score"] = c["score"]
+    return candidates, "rule"
+
+
+def _reference_by_text(db: Session, text: str, top_n: int = 3) -> list[dict]:
+    """按任意文本反查历史范式（不依赖 BorderDemand 对象）"""
+    keywords = _extract_keywords(text)
+    scored = []
+    for ach in db.query(CompletedAchievement).all():
+        atext = " ".join(filter(None, [ach.title, ach.highlights, ach.work_done,
+                                       ach.replicable_points]))
+        score = _keyword_score(keywords, atext)
+        if score > 0:
+            scored.append({"achievement_id": ach.achievement_id, "title": ach.title,
+                           "region": ach.region,
+                           "highlights": (ach.highlights or "")[:200],
+                           "replicable_points": ach.replicable_points,
+                           "reference_score": round(score, 2)})
+    scored.sort(key=lambda x: x["reference_score"], reverse=True)
+    return scored[:top_n]
